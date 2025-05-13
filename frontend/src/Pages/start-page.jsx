@@ -36,6 +36,12 @@ const NavContent = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 const Logo = styled.div`
@@ -58,6 +64,11 @@ const NavLinks = styled.ul`
   gap: 2.5rem;
   list-style: none;
   margin: 0;
+
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+    padding: 0;
+  }
 `;
 
 const NavLink = styled.li`
@@ -70,6 +81,9 @@ const NavLink = styled.li`
   &:hover {
     color: ${({ theme }) => theme.colors.gold};
     opacity: 1;
+  }
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
   }
 `;
 
@@ -93,6 +107,10 @@ const HeroContent = styled.div`
   margin: 0 auto;
   width: 100%;
   padding: 0 2rem;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
 `;
 
 const HeroTitle = styled.h1`
@@ -100,12 +118,20 @@ const HeroTitle = styled.h1`
   font-size: 3rem;
   letter-spacing: 2px;
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 `;
 
 const HeroSubtitle = styled.p`
   color: ${({ theme }) => theme.colors.textSoft};
   font-size: 1.3rem;
   margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const HeroButton = styled.a`
@@ -119,6 +145,10 @@ const HeroButton = styled.a`
   &:hover {
     background: ${({ theme }) => theme.colors.goldLight};
   }
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.1rem;
+  }
 `;
 
 const Section = styled.section`
@@ -126,6 +156,10 @@ const Section = styled.section`
   margin: 0 auto;
   padding: 4rem 1rem 2rem 1rem;
   background: ${({ theme }) => theme.colors.background};
+
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+  }
 `;
 
 const SectionTitle = styled.h2`
@@ -135,6 +169,10 @@ const SectionTitle = styled.h2`
   margin-bottom: 1rem;
   border-bottom: 2px solid ${({ theme }) => theme.colors.gold};
   display: inline-block;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const StudioGrid = styled.div`
@@ -142,6 +180,11 @@ const StudioGrid = styled.div`
   flex-wrap: wrap;
   gap: 2rem;
   align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 `;
 
 const StudioImage = styled.img`
@@ -154,6 +197,11 @@ const StudioImage = styled.img`
 const StudioText = styled.div`
   flex: 1;
   min-width: 250px;
+
+  @media (max-width: 768px) {
+    text-align: center;
+    margin-top: 1rem;
+  }
 `;
 
 const TeamGrid = styled.div`
@@ -161,6 +209,10 @@ const TeamGrid = styled.div`
   flex-wrap: wrap;
   gap: 2rem;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+  }
 `;
 
 const TeamCard = styled.div`
@@ -174,6 +226,11 @@ const TeamCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 300px;
+  }
 `;
 
 const TeamImg = styled.img`
@@ -186,6 +243,11 @@ const TeamImg = styled.img`
   margin-bottom: 1rem;
   background: #222;
   display: block;
+
+  @media (max-width: 768px) {
+    width: 150px;
+    height: 150px;
+  }
 `;
 
 const TeamName = styled.h3`
@@ -212,6 +274,11 @@ const Footer = styled.footer`
   padding: 2rem 1rem 1rem 1rem;
   border-top: 2px solid ${({ theme }) => theme.colors.gold};
   margin-top: 3rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 0.5rem 1rem 0.5rem;
+    font-size: 0.95rem;
+  }
 `;
 
 const CarouselWrapper = styled.div`
@@ -219,6 +286,11 @@ const CarouselWrapper = styled.div`
   width: 500px;
   height: 320px;
   margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 250px;
+  }
 `;
 
 const CarouselImage = styled.img`
@@ -269,6 +341,10 @@ const StudioCTA = styled.a`
   &:hover {
     background: ${({ theme }) => theme.colors.goldLight};
   }
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1.05rem;
+  }
 `;
 
 const SocialIcons = styled.div`
@@ -276,6 +352,10 @@ const SocialIcons = styled.div`
   justify-content: center;
   gap: 1.5rem;
   margin-top: 1.5rem;
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const SocialIcon = styled.a`
@@ -284,6 +364,18 @@ const SocialIcon = styled.a`
   transition: color 0.2s;
   &:hover {
     color: ${({ theme }) => theme.colors.goldLight};
+  }
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+`;
+
+const CTACard = styled(TeamCard)`
+  margin-top: 0;
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 300px;
+    margin-top: 1.5rem;
   }
 `;
 
@@ -431,6 +523,48 @@ export default function StartPage() {
               och akvarell i kombination.
             </TeamDesc>
           </TeamCard>
+          <CTACard>
+            <div style={{ width: '100%', textAlign: 'center' }}>
+              <p
+                style={{
+                  fontSize: '1.1rem',
+                  margin: '0 0 1rem 0',
+                  color: '#fff',
+                }}>
+                Redo att förverkliga din vision?
+              </p>
+              <p
+                style={{
+                  fontSize: '1rem',
+                  margin: '0 0 1.5rem 0',
+                  color: '#fff',
+                }}>
+                Boka en konsultation med en av våra erfarna tatuerare idag
+              </p>
+              <a
+                href='#booking'
+                style={{
+                  display: 'inline-block',
+                  background: '#FFD700',
+                  color: '#181716',
+                  fontWeight: 'bold',
+                  borderRadius: '5px',
+                  padding: '0.8rem 2rem',
+                  textDecoration: 'none',
+                  fontSize: '1.1rem',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                  transition: 'background 0.2s',
+                }}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.background = '#ffe066')
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.background = '#FFD700')
+                }>
+                Boka tid nu
+              </a>
+            </div>
+          </CTACard>
         </TeamGrid>
       </Section>
 
@@ -456,23 +590,6 @@ export default function StartPage() {
               <rect x='2' y='2' width='20' height='20' rx='5' ry='5' />
               <path d='M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z' />
               <line x1='17.5' y1='6.5' x2='17.5' y2='6.5' />
-            </svg>
-          </SocialIcon>
-          <SocialIcon
-            href='#'
-            aria-label='TikTok'
-            target='_blank'
-            rel='noopener noreferrer'>
-            <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <path d='M9 17V8h3V6a4 4 0 0 1 4 4v7a4 4 0 1 1-4-4' />
             </svg>
           </SocialIcon>
           <SocialIcon
