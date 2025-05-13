@@ -1,26 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import tattooHero from '../assets/tattoo-Hero.jpg'; // adjust path/filename if needed
+import mantattoo1 from '../assets/man_tatto1.jpg';
+import mantattoo2 from '../assets/man_tatto2.jpg';
+import mantattoo3 from '../assets/man_tatto3.jpg';
+import mantattoo4 from '../assets/man_tatto4.jpg';
+import womantatto from '../assets/woman_tatto.jpg';
+import studio1 from '../assets/studio1.jpg';
+import studio2 from '../assets/studio2.jpg';
+import studio3 from '../assets/studio3.jpg';
+import studio4 from '../assets/studio4.jpg';
 
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.colors.background};
   color: ${({ theme }) => theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.main};
+  font-family: 'Roboto', ${({ theme }) => theme.fonts.main};
   min-height: 100vh;
+  overflow-x: hidden;
 `;
 
 const NavBar = styled.nav`
   width: 100%;
   background: #2a1a13;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 3rem 1.2rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+`;
+
+const NavContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
 `;
 
 const Logo = styled.div`
@@ -59,16 +74,25 @@ const NavLink = styled.li`
 `;
 
 const Hero = styled.section`
+  width: 100vw;
+  min-height: 70vh;
+  background: linear-gradient(rgba(24, 23, 22, 0.8), rgba(24, 23, 22, 0.8)),
+    url(${(props) => props.bg}) center/cover;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 70vh;
-  background: linear-gradient(rgba(24, 23, 22, 0.8), rgba(24, 23, 22, 0.8)),
-    url(${(props) => props.bg}) center/cover;
   text-align: center;
   border-bottom: 2px solid ${({ theme }) => theme.colors.gold};
   padding-top: 6.5rem;
+  margin: 0;
+`;
+
+const HeroContent = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 2rem;
 `;
 
 const HeroTitle = styled.h1`
@@ -101,6 +125,7 @@ const Section = styled.section`
   max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 1rem 2rem 1rem;
+  background: ${({ theme }) => theme.colors.background};
 `;
 
 const SectionTitle = styled.h2`
@@ -143,7 +168,7 @@ const TeamCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.gold};
   border-radius: 8px;
   padding: 2rem 1.5rem;
-  width: 250px;
+  width: 220px;
   color: ${({ theme }) => theme.colors.text};
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -152,12 +177,15 @@ const TeamCard = styled.div`
 `;
 
 const TeamImg = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 180px;
+  height: 180px;
   object-fit: cover;
-  border-radius: 50%;
+  object-position: top center;
+  border-radius: 12px;
   border: 2px solid ${({ theme }) => theme.colors.gold};
   margin-bottom: 1rem;
+  background: #222;
+  display: block;
 `;
 
 const TeamName = styled.h3`
@@ -186,36 +214,142 @@ const Footer = styled.footer`
   margin-top: 3rem;
 `;
 
+const CarouselWrapper = styled.div`
+  position: relative;
+  width: 500px;
+  height: 320px;
+  margin-bottom: 1.5rem;
+`;
+
+const CarouselImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 2px solid ${({ theme }) => theme.colors.gold};
+  border-radius: 8px;
+  background: #222;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: ${(props) => (props.active ? 1 : 0)};
+  transition: opacity 0.5s ease;
+`;
+
+const CarouselButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: ${({ theme }) => theme.colors.gold};
+  color: ${({ theme }) => theme.colors.background};
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 2;
+  opacity: 0.8;
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const StudioCTA = styled.a`
+  display: inline-block;
+  margin: 2rem 0 0 0;
+  padding: 1rem 2.5rem;
+  background: ${({ theme }) => theme.colors.gold};
+  color: ${({ theme }) => theme.colors.background};
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  &:hover {
+    background: ${({ theme }) => theme.colors.goldLight};
+  }
+`;
+
+const SocialIcons = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+`;
+
+const SocialIcon = styled.a`
+  color: ${({ theme }) => theme.colors.gold};
+  font-size: 2rem;
+  transition: color 0.2s;
+  &:hover {
+    color: ${({ theme }) => theme.colors.goldLight};
+  }
+`;
+
 export default function StartPage() {
+  const studioImages = [studio1, studio2, studio3, studio4];
+  const [studioIndex, setStudioIndex] = useState(0);
+  const nextStudio = () =>
+    setStudioIndex((studioIndex + 1) % studioImages.length);
+  const prevStudio = () =>
+    setStudioIndex(
+      (studioIndex - 1 + studioImages.length) % studioImages.length
+    );
+
+  // Autoplay: move to next image every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStudioIndex((prev) => (prev + 1) % studioImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [studioImages.length]);
+
   return (
     <Wrapper>
       <NavBar>
-        <Logo>
-          TOTTES <span>TATTOO</span>
-        </Logo>
-        <NavLinks>
-          <NavLink>Hem</NavLink>
-          <NavLink>Portfolio</NavLink>
-          <NavLink>Bokning</NavLink>
-        </NavLinks>
+        <NavContent>
+          <Logo>
+            TOTTES <span>TATTOO</span>
+          </Logo>
+          <NavLinks>
+            <NavLink>Hem</NavLink>
+            <NavLink>Portfolio</NavLink>
+            <NavLink>Bokning</NavLink>
+          </NavLinks>
+        </NavContent>
       </NavBar>
       <Hero bg={tattooHero}>
-        <HeroTitle>Välkommen till Tottes Tattoo</HeroTitle>
-        <HeroSubtitle>
-          Din resa mot en unik tatuering börjar här i hjärtat av Kungälv
-        </HeroSubtitle>
-        <HeroSubtitle style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>
-          Med över 15 års erfarenhet och en passion för fantasy-motiv med hög
-          detaljrikedom,
-          <br />
-          skapar vi tatueringar som berättar din unika historia.
-        </HeroSubtitle>
-        <HeroButton href='#booking'>Boka din tid</HeroButton>
+        <HeroContent>
+          <HeroTitle>Välkommen till Tottes Tattoo</HeroTitle>
+          <HeroSubtitle>
+            Din resa mot en unik tatuering börjar här i hjärtat av Kungälv
+          </HeroSubtitle>
+          <HeroSubtitle style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>
+            Med över 15 års erfarenhet och en passion för fantasy-motiv med hög
+            detaljrikedom,
+            <br />
+            skapar vi tatueringar som berättar din unika historia.
+          </HeroSubtitle>
+          <HeroButton href='#booking'>Boka din tid</HeroButton>
+        </HeroContent>
       </Hero>
 
       <Section>
         <StudioGrid>
-          <StudioImage src={tattooHero} alt='Tottes Tattoo studio interior' />
+          <div>
+            <CarouselWrapper>
+              {studioImages.map((img, i) => (
+                <CarouselImage
+                  key={i}
+                  src={img}
+                  alt={`Studio ${i + 1}`}
+                  active={i === studioIndex}
+                />
+              ))}
+            </CarouselWrapper>
+            <StudioCTA href='#booking'>Boka nu</StudioCTA>
+          </div>
           <StudioText>
             <SectionTitle>Vår studio</SectionTitle>
             <p>
@@ -247,10 +381,12 @@ export default function StartPage() {
       </Section>
 
       <Section>
-        <SectionTitle>Vårt Team</SectionTitle>
+        <SectionTitle style={{ marginBottom: '2rem', textAlign: 'left' }}>
+          Vårt Team
+        </SectionTitle>
         <TeamGrid>
           <TeamCard>
-            <TeamImg src={tattooHero} alt='Totte Lindström' />
+            <TeamImg src={mantattoo1} alt='Totte Lindström' />
             <TeamName>Totte Lindström</TeamName>
             <TeamRole>Grundare & Konstnärlig ledare</TeamRole>
             <TeamDesc>
@@ -260,8 +396,8 @@ export default function StartPage() {
             </TeamDesc>
           </TeamCard>
           <TeamCard>
-            <TeamImg src={tattooHero} alt='Amanda Berg' />
-            <TeamName>Amanda Berg</TeamName>
+            <TeamImg src={mantattoo2} alt='Anders Lindström' />
+            <TeamName>Anders Lindström</TeamName>
             <TeamRole>Senior tatuerare</TeamRole>
             <TeamDesc>
               Expert på realistiska porträtt med fantasyinslag. Perfektion i
@@ -269,7 +405,7 @@ export default function StartPage() {
             </TeamDesc>
           </TeamCard>
           <TeamCard>
-            <TeamImg src={tattooHero} alt='Erik Sandberg' />
+            <TeamImg src={mantattoo3} alt='Erik Sandberg' />
             <TeamName>Erik Sandberg</TeamName>
             <TeamRole>Tatuerare & Designer</TeamRole>
             <TeamDesc>
@@ -278,21 +414,21 @@ export default function StartPage() {
             </TeamDesc>
           </TeamCard>
           <TeamCard>
-            <TeamImg src={tattooHero} alt='Julia Chen' />
-            <TeamName>Julia Chen</TeamName>
-            <TeamRole>Akvarell & Abstrakt Expert</TeamRole>
-            <TeamDesc>
-              Unik stil med flytande former och mjuka färgövergångar. Fantasy
-              och akvarell i kombination.
-            </TeamDesc>
-          </TeamCard>
-          <TeamCard>
-            <TeamImg src={tattooHero} alt='Marcus Diaz' />
+            <TeamImg src={mantattoo4} alt='Marcus Diaz' />
             <TeamName>Marcus Diaz</TeamName>
             <TeamRole>Tribal & Biomekanisk Expert</TeamRole>
             <TeamDesc>
               Mästare på tribal och biomekaniska tatueringar med fantasy-inslag
               och detaljerade mönster.
+            </TeamDesc>
+          </TeamCard>
+          <TeamCard>
+            <TeamImg src={womantatto} alt='amanda Berg' />
+            <TeamName>Amanda Berg</TeamName>
+            <TeamRole>Akvarell & Abstrakt Expert</TeamRole>
+            <TeamDesc>
+              Unik stil med flytande former och mjuka färgövergångar. Fantasy
+              och akvarell i kombination.
             </TeamDesc>
           </TeamCard>
         </TeamGrid>
@@ -302,6 +438,96 @@ export default function StartPage() {
         <b>Tottes Tattoo</b> &copy; 2024. Alla rättigheter förbehållna.
         <br />
         Din väg till unika fantasy-tatueringar.
+        <SocialIcons>
+          <SocialIcon
+            href='#'
+            aria-label='Instagram'
+            target='_blank'
+            rel='noopener noreferrer'>
+            <svg
+              width='28'
+              height='28'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'>
+              <rect x='2' y='2' width='20' height='20' rx='5' ry='5' />
+              <path d='M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z' />
+              <line x1='17.5' y1='6.5' x2='17.5' y2='6.5' />
+            </svg>
+          </SocialIcon>
+          <SocialIcon
+            href='#'
+            aria-label='TikTok'
+            target='_blank'
+            rel='noopener noreferrer'>
+            <svg
+              width='28'
+              height='28'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'>
+              <path d='M9 17V8h3V6a4 4 0 0 1 4 4v7a4 4 0 1 1-4-4' />
+            </svg>
+          </SocialIcon>
+          <SocialIcon
+            href='#'
+            aria-label='Facebook'
+            target='_blank'
+            rel='noopener noreferrer'>
+            <svg
+              width='28'
+              height='28'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'>
+              <path d='M18 2h-3a4 4 0 0 0-4 4v3H7v4h4v8h4v-8h3l1-4h-4V6a1 1 0 0 1 1-1h3z' />
+            </svg>
+          </SocialIcon>
+          <SocialIcon
+            href='#'
+            aria-label='YouTube'
+            target='_blank'
+            rel='noopener noreferrer'>
+            <svg
+              width='28'
+              height='28'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'>
+              <rect x='2' y='7' width='20' height='10' rx='3' ry='3' />
+              <polygon points='10 9 15 12 10 15 10 9' />
+            </svg>
+          </SocialIcon>
+          <SocialIcon
+            href='#'
+            aria-label='X'
+            target='_blank'
+            rel='noopener noreferrer'>
+            <svg
+              width='28'
+              height='28'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'>
+              <path d='M18 6L6 18M6 6l12 12' />
+            </svg>
+          </SocialIcon>
+        </SocialIcons>
       </Footer>
     </Wrapper>
   );
