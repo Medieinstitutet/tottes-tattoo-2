@@ -1,8 +1,16 @@
 # tottes-tattoo-2
 
 Backend team:
+Rain
+Arwin
+Jihi
+David
 
 Frontend team:
+Lotiz
+Rita
+Zoher
+Niklas
 
 ## Frågor:
 
@@ -49,3 +57,8 @@ Kund ska kunna skicka in bifogad bild av önskad tattoo.
 1- 2 timmar vanligtvis. Längre bokningar ska vara möjliga.
 
 Tottes stil är fantasy med hög detaljrikdom. Temat på sidan borde spegla detta.
+
+## Info från lektion 9 kl 09.00
+
+- Ingen testing behövs
+- Lämna in som zip men också länk till vårt repo.
