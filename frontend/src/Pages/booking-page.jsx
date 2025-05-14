@@ -9,11 +9,13 @@ const BookingPage = () => {
     date: new Date(),
     time: '',
     tattooArtist: '',
+    tattooTime: '',
     name: '',
     email: '',
     tattooStyle: '',
     additionalInfo: '',
   });
+
   const [isTimeAvailable, setIsTimeAvailable] = useState(false);
 
   const handleChange = (e) => {
@@ -24,12 +26,32 @@ const BookingPage = () => {
     }));
   };
 
+  const getAvailableStartTimes = () => {
+    const allTimes = [
+      '09:00',
+      '10:00',
+      '11:00',
+      '13:00',
+      '14:00',
+      '15:00',
+      '16:00',
+      '17:00',
+    ];
+
+    if (formData.tattooTime === '2') {
+      // Blockera tider som skulle krocka med lunch (kl 12) eller stängning
+      return allTimes.filter((time) => time !== '11:00' && time !== '17:00');
+    }
+
+    return allTimes;
+  };
+
   const handleDateChange = (date) => {
     setFormData((prev) => ({
       ...prev,
       date: date,
     }));
-    checkTimeAvailability(date); // Kolla om tiden är ledig när datum ändras
+    checkTimeAvailability(date);
   };
 
   const handleTimeChange = (e) => {
@@ -38,7 +60,7 @@ const BookingPage = () => {
       ...prev,
       time: time,
     }));
-    checkTimeAvailability(formData.date, time); // Kolla om tiden är ledig när tid ändras
+    checkTimeAvailability(formData.date, time);
   };
 
   const checkTimeAvailability = (date, time) => {
@@ -76,38 +98,42 @@ const BookingPage = () => {
         <br />
 
         <label>
-          Välj tid:
+          Välj tid för tatuering:
+          <select
+            name="tattooTime"
+            value={formData.tattooTime}
+            onChange={handleChange}
+            required>
+            <option value="">Välj tid</option>
+            <option value="1">1 timme</option>
+            <option value="2">2 timmar</option>
+          </select>
+        </label>
+
+        <br />
+
+        <label>
+          Starttid för tatuering:
           <select
             name="time"
             value={formData.time}
             onChange={handleTimeChange}
             required>
-            <option value="">Välj tid</option>
-            <option value="09:00">09:00</option>
-            <option value="10:00">10:00</option>
-            <option value="11:00">11:00</option>
-            <option value="13:00">13:00</option>
-            <option value="14:00">14:00</option>
-            <option value="15:00">15:00</option>
+            <option value="">Välj starttid</option>
+            {getAvailableStartTimes().map((time) => (
+              <option key={time} value={time}>
+                {time}
+              </option>
+            ))}
           </select>
+          {formData.tattooTime === '2' && (
+            <small style={{ color: 'red' }}>
+              Obs: Vissa tider är inte tillgängliga för 2-timmarsbokningar på
+              grund av lunch eller stängning.
+            </small>
+          )}
         </label>
-        <br />
 
-        <label>
-          Välj tatuerare:
-          <select
-            name="tattooArtist"
-            value={formData.tattooArtist}
-            onChange={handleChange}
-            required>
-            <option value="">Välj tatuerare</option>
-            <option value="Totte">Totte</option>
-            <option value="Niklas">Niklas</option>
-            <option value="Rita">Rita</option>
-            <option value="Lotiz">Lotiz</option>
-            <option value="Zoher">Zoher</option>
-          </select>
-        </label>
         <br />
 
         {isTimeAvailable && (
@@ -136,14 +162,35 @@ const BookingPage = () => {
             <br />
             <label>
               Tatueringsstil:
-              <input
-                type="text"
+              <select
                 name="tattooStyle"
                 value={formData.tattooStyle}
                 onChange={handleChange}
-                required
-              />
+                required>
+                <option value="">Välj en stil</option>
+                <option value="Old School">Old School (Traditional)</option>
+                <option value="New School">New School</option>
+                <option value="Realism">Realism</option>
+                <option value="Black & Grey">Black & Grey</option>
+                <option value="Dotwork">Dotwork</option>
+                <option value="Linework">Linework</option>
+                <option value="Watercolor">Watercolor</option>
+                <option value="Geometric">Geometrisk</option>
+                <option value="Tribal">Tribal</option>
+                <option value="Japanese">Japansk (Irezumi)</option>
+                <option value="Chicano">Chicano</option>
+                <option value="Neo Traditional">Neo Traditional</option>
+                <option value="Minimalistisk">Minimalistisk</option>
+                <option value="Sketch">Sketch/Illustrativ</option>
+                <option value="Trash Polka">Trash Polka</option>
+                <option value="Fineline">Fineline</option>
+                <option value="Surrealism">Surrealism</option>
+                <option value="Biomekanisk">Biomekanisk</option>
+                <option value="Celtic">Keltisk</option>
+                <option value="Ignorant Style">Ignorant Style</option>
+              </select>
             </label>
+
             <br />
             <label>
               Övrig information:
