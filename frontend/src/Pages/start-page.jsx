@@ -406,9 +406,25 @@ export default function StartPage() {
             TOTTES <span>TATTOO</span>
           </Logo>
           <NavLinks>
-            <NavLink>Hem</NavLink>
-            <NavLink>Portfolio</NavLink>
-            <NavLink>Bokning</NavLink>
+            <NavLink>
+              <Link to='/' style={{ color: 'inherit', textDecoration: 'none' }}>
+                Hem
+              </Link>
+            </NavLink>
+            <NavLink>
+              <Link
+                to='/portfolio'
+                style={{ color: 'inherit', textDecoration: 'none' }}>
+                Portfolio
+              </Link>
+            </NavLink>
+            <NavLink>
+              <Link
+                to='/booking'
+                style={{ color: 'inherit', textDecoration: 'none' }}>
+                Bokning
+              </Link>
+            </NavLink>
           </NavLinks>
         </NavContent>
       </NavBar>
