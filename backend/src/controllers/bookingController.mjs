@@ -1,4 +1,6 @@
+import ErrorResponse from '../utilities/errorResponse.mjs';
 import { saveBooking, readBookings, findOccupiedSlots } from '../models/bookingModel.mjs';
+import { validateEmail, isValidDate, isValidTimeFormat, isWithinWorkingHours, isNotLunchHour, isWeekday } from '../utilities/validators.mjs';
 
 export const createBooking = async (req, res, next) => {
   try {
@@ -6,72 +8,67 @@ export const createBooking = async (req, res, next) => {
     const file = req.file;
 
     if (!name || !email || !date || !time || !type || !file || !duration) {
-      return res.status(400).json({ success: false, message: 'All fields are required.' });
+      throw new ErrorResponse('All fields are required.', 400);
     }
 
-    if (!['tattoo', 'consultation'].includes(type.toLowerCase())) {
-      return res.status(400).json({ success: false, message: 'Invalid booking type.' });
+    if (!validateEmail(email)) {
+      throw new ErrorResponse('Invalid email address.', 400);
     }
 
-    const [hourStr, minuteStr] = time.split(':');
-    const hour = parseInt(hourStr, 10);
-    const minute = parseInt(minuteStr, 10);
-
-    if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-      return res.status(400).json({ success: false, message: 'Invalid time format.' });
+    if (!isValidDate(date)) {
+      throw new ErrorResponse('Invalid date format.', 400);
     }
 
-    if (hour === 12) {
-      return res.status(400).json({
-        success: false,
-        message: 'Bookings are closed for lunch between 12:00 and 13:00.',
-      });
+    if (!isValidTimeFormat(time)) {
+      throw new ErrorResponse('Invalid time format.', 400);
     }
 
-    if (hour < 9 || hour >= 18) {
-      return res.status(400).json({
-        success: false,
-        message: 'Bookings must be between 09:00 and 18:00.',
-      });
+    if (!isWithinWorkingHours(time)) {
+      throw new ErrorResponse('Bookings must be between 09:00 and 18:00.', 400);
     }
 
-    const bookingDate = new Date(`${date}T${time}`);
-    const dayOfWeek = bookingDate.getDay();
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      return res.status(400).json({
-        success: false,
-        message: 'Bookings are only available Monday to Friday.',
-      });
+    if (!isNotLunchHour(time)) {
+      throw new ErrorResponse('Bookings are closed for lunch between 12:00 and 13:00.', 400);
+    }
+
+    if (!isWeekday(date)) {
+      throw new ErrorResponse('Bookings are only available Monday to Friday.', 400);
     }
 
     const durationNum = parseInt(duration, 10);
     if (isNaN(durationNum) || durationNum < 60 || durationNum > 480) {
-      return res.status(400).json({
-        success: false,
-        message: 'Duration must be between 60 and 480 minutes.',
-      });
+      throw new ErrorResponse('Duration must be between 60 and 480 minutes.', 400);
     }
 
+    // Kontrollera överlapp och antal bokningar
     const existingBookings = await findOccupiedSlots();
     const startTime = new Date(`${date}T${time}:00`);
     const endTime = new Date(startTime.getTime() + durationNum * 60 * 1000);
-    const isOverlapping = existingBookings.some(b => {
+
+    // Hitta alla bokningar som överlappar med det önskade tidsintervallet
+    const overlappingBookings = existingBookings.filter(b => {
       if (b.date !== date) return false;
-      const [bHour, bMinute] = b.time.split(':').map(Number);
       const bStart = new Date(`${date}T${b.time}:00`);
       const bEnd = new Date(bStart.getTime() + b.duration * 60 * 1000);
       return startTime < bEnd && endTime > bStart;
     });
 
-    if (isOverlapping) {
-      return res.status(400).json({
-        success: false,
-        message: 'The time slot overlaps with another booking.',
-      });
+    // Räkna unika tatuerare som är bokade under intervallet
+    const bookedTattooers = new Set(overlappingBookings.map(b => b.tattooer));
+    if (bookedTattooers.size >= 5) {
+      throw new ErrorResponse('All tattooers are booked for this time slot.', 400);
     }
 
+    // Lista över alla tatuerare
     const tattooers = ['Totte', 'Emma', 'Johan', 'Nina', 'Alex'];
-    const assignedTattooer = tattooers[Math.floor(Math.random() * tattooers.length)];
+    // Hitta tillgängliga tatuerare (de som inte är bokade)
+    const availableTattooers = tattooers.filter(t => !bookedTattooers.has(t));
+    if (availableTattooers.length === 0) {
+      throw new ErrorResponse('No tattooers available for this time slot.', 400);
+    }
+
+    // Välj en slumpmässig tillgänglig tatuerare
+    const assignedTattooer = availableTattooers[Math.floor(Math.random() * availableTattooers.length)];
 
     const booking = {
       id: Date.now(),
@@ -118,23 +115,18 @@ export const getAvailableSlots = async (req, res, next) => {
   try {
     const { date } = req.query;
     if (!date) {
-      return res.status(400).json({ success: false, message: 'Datum krävs' });
+      throw new ErrorResponse('Datum krävs', 400);
     }
 
-    const bookingDate = new Date(date);
-    const dayOfWeek = bookingDate.getDay();
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      return res.status(400).json({
-        success: false,
-        message: 'Bokningar är endast tillgängliga måndag till fredag',
-      });
+    if (!isValidDate(date)) {
+      throw new ErrorResponse('Ogiltigt datumformat', 400);
+    }
+
+    if (!isWeekday(date)) {
+      throw new ErrorResponse('Bokningar är endast tillgängliga måndag till fredag', 400);
     }
 
     const bookings = await readBookings();
-    const bookedSlots = bookings
-      .filter(b => b.date === date)
-      .map(b => b.time);
-
     const workHours = [
       { start: '09:00', end: '12:00' },
       { start: '13:00', end: '18:00' },
@@ -147,10 +139,12 @@ export const getAvailableSlots = async (req, res, next) => {
 
       while (current < endTime) {
         const slotTime = current.toTimeString().slice(0, 5);
-        if (!bookedSlots.includes(slotTime)) {
+        // Räkna bokningar för denna tid
+        const bookingsAtTime = bookings.filter(b => b.date === date && b.time === slotTime);
+        if (bookingsAtTime.length < 5) { // Mindre än 5 tatuerare bokade
           availableSlots.push(slotTime);
         }
-        current.setMinutes(current.getMinutes() + 60); 
+        current.setMinutes(current.getMinutes() + 60); // 1-timmesintervall
       }
     });
 
