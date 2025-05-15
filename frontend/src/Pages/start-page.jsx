@@ -10,6 +10,7 @@ import studio1 from '../assets/studio1.jpg';
 import studio2 from '../assets/studio2.jpg';
 import studio3 from '../assets/studio3.jpg';
 import studio4 from '../assets/studio4.jpg';
+import { Link } from 'react-router-dom';
 
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.colors.background};
@@ -405,9 +406,25 @@ export default function StartPage() {
             TOTTES <span>TATTOO</span>
           </Logo>
           <NavLinks>
-            <NavLink>Hem</NavLink>
-            <NavLink>Portfolio</NavLink>
-            <NavLink>Bokning</NavLink>
+            <NavLink>
+              <Link to='/' style={{ color: 'inherit', textDecoration: 'none' }}>
+                Hem
+              </Link>
+            </NavLink>
+            <NavLink>
+              <Link
+                to='/portfolio'
+                style={{ color: 'inherit', textDecoration: 'none' }}>
+                Portfolio
+              </Link>
+            </NavLink>
+            <NavLink>
+              <Link
+                to='/booking'
+                style={{ color: 'inherit', textDecoration: 'none' }}>
+                Bokning
+              </Link>
+            </NavLink>
           </NavLinks>
         </NavContent>
       </NavBar>
