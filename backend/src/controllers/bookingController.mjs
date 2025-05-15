@@ -122,3 +122,49 @@ export const getOccupiedSlots = async (req, res, next) => {
     next(err);
   }
 };
+
+export const getAvailableSlots = async (req, res, next) => {
+  try {
+    const { date } = req.query;
+    if (!date) {
+      return res.status(400).json({ success: false, message: 'Datum krävs' });
+    }
+
+    const bookingDate = new Date(date);
+    const dayOfWeek = bookingDate.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Bokningar är endast tillgängliga måndag till fredag',
+      });
+    }
+
+    const bookings = await readBookings();
+    const bookedSlots = bookings
+      .filter(b => b.date === date)
+      .map(b => b.time);
+
+    const workHours = [
+      { start: '09:00', end: '12:00' },
+      { start: '13:00', end: '18:00' },
+    ];
+
+    const availableSlots = [];
+    workHours.forEach(({ start, end }) => {
+      let current = new Date(`${date}T${start}:00`);
+      const endTime = new Date(`${date}T${end}:00`);
+
+      while (current < endTime) {
+        const slotTime = current.toTimeString().slice(0, 5);
+        if (!bookedSlots.includes(slotTime)) {
+          availableSlots.push(slotTime);
+        }
+        current.setMinutes(current.getMinutes() + 60);
+      }
+    });
+
+    res.json(availableSlots);
+  } catch (err) {
+    next(err);
+  }
+};

@@ -11,5 +11,6 @@ const router = express.Router();
 router.post('/', upload.single('file'), createBooking);
 router.get('/', getBookings);
 router.get('/occupied', getOccupiedSlots);
+router.get('/slots', getAvailableSlots);
 
 export default router;
