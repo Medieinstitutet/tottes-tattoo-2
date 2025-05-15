@@ -19,8 +19,5 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
-  },
-  "dependencies": {
-    "react-datepicker": "^8.3.0"
   }
 }
