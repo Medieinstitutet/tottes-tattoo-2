@@ -1,10 +1,11 @@
 {
-  "name": "arwin-tottes-tattoo",
+  "name": "tottes-tattoo-backend",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server.mjs"
+    "start": "node server.mjs",
+    "dev": "nodemon server.mjs",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
