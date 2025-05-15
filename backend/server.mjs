@@ -1,8 +1,4 @@
-import app from './app.mjs';
-import config from './config/config.mjs';
+import app from './src/app.mjs';
 
-app.listen(config.port, () => {
-  console.log(
-    `Server is running at http://localhost:${config.port} in ${config.nodeEnv} mode`
-  );
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static('./uploads'));
 
 // API routes
 app.use('/api/v1/bookings', bookingRoutes);
