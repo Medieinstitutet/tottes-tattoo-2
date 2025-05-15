@@ -1,3 +1,7 @@
+# Hur man använder
+
+Starta servern: npm run dev
+
 # Artists (Tatuerare)
 
 GET http://localhost:3000/api/v1/artists
