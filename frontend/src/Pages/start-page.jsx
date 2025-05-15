@@ -440,7 +440,9 @@ export default function StartPage() {
             <br />
             skapar vi tatueringar som berättar din unika historia.
           </HeroSubtitle>
-          <HeroButton href='#booking'>Boka din tid</HeroButton>
+          <HeroButton as={Link} to='/booking'>
+            Boka din tid
+          </HeroButton>
         </HeroContent>
       </Hero>
 
@@ -457,7 +459,9 @@ export default function StartPage() {
                 />
               ))}
             </CarouselWrapper>
-            <StudioCTA href='#booking'>Boka nu</StudioCTA>
+            <StudioCTA as={Link} to='/booking'>
+              Boka nu
+            </StudioCTA>
           </div>
           <StudioText>
             <SectionTitle>Vår studio</SectionTitle>
@@ -558,28 +562,9 @@ export default function StartPage() {
                 }}>
                 Boka en konsultation med en av våra erfarna tatuerare idag
               </p>
-              <a
-                href='#booking'
-                style={{
-                  display: 'inline-block',
-                  background: '#FFD700',
-                  color: '#181716',
-                  fontWeight: 'bold',
-                  borderRadius: '5px',
-                  padding: '0.8rem 2rem',
-                  textDecoration: 'none',
-                  fontSize: '1.1rem',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                  transition: 'background 0.2s',
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.background = '#ffe066')
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.background = '#FFD700')
-                }>
+              <HeroButton as={Link} to='/booking'>
                 Boka tid nu
-              </a>
+              </HeroButton>
             </div>
           </CTACard>
         </TeamGrid>
