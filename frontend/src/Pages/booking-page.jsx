@@ -119,160 +119,227 @@ const BookingPage = () => {
   };
 
   return (
-    <main
-      style={{
-        backgroundImage: `url(${tattooImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '100vh',
-      }}>
-      <h1>Boka tid hos Tottes Tattoo</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Välj datum:
-          <input
-            type="text"
-            readOnly
-            value={formData.date.toISOString().split('T')[0]}
-            onClick={() => setShowDatepicker(!showDatepicker)}
-            style={{ cursor: 'pointer' }}
-          />
-        </label>
-
-        {showDatepicker && (
-          <div style={{ marginBottom: '1rem' }}>
-            <DatePicker
-              selected={formData.date}
-              onChange={handleDateChange}
-              inline
+    <>
+      <main
+        style={{
+          backgroundImage: `url(${tattooImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          minHeight: '100vh',
+          padding: '4rem 2rem',
+          fontFamily: "'Georgia', serif",
+          color: '#f1f1f1',
+          textShadow: '2px 2px 10px rgba(0, 0, 0, 0.7)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+        }}>
+        <h1>Boka tid hos Tottes Tattoo</h1>
+        <form
+          onSubmit={handleSubmit}
+          style={{ width: '100%', maxWidth: '500px' }}>
+          <label>
+            Välj datum:
+            <input
+              type="text"
+              readOnly
+              value={formData.date.toISOString().split('T')[0]}
+              onClick={() => setShowDatepicker(!showDatepicker)}
+              style={{
+                cursor: 'pointer',
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.3rem',
+              }}
             />
-          </div>
-        )}
+          </label>
 
-        <br />
-
-        <label>
-          Välj tid för tatuering:
-          <select
-            name="tattooTime"
-            value={formData.tattooTime}
-            onChange={handleChange}
-            required>
-            <option value="">Välj tid</option>
-            <option value="1">1 timme</option>
-            <option value="2">2 timmar</option>
-          </select>
-        </label>
-
-        <br />
-
-        <label>
-          Starttid för tatuering:
-          <select
-            name="time"
-            value={formData.time}
-            onChange={handleTimeChange}
-            required>
-            <option value="">Välj starttid</option>
-            {getAvailableStartTimes().map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
-          {formData.tattooTime === '2' && (
-            <small style={{ color: 'red' }}>
-              Obs: Vissa tider är inte tillgängliga för 2-timmarsbokningar på
-              grund av lunch eller stängning.
-            </small>
+          {showDatepicker && (
+            <div style={{ marginBottom: '1rem' }}>
+              <DatePicker
+                selected={formData.date}
+                onChange={handleDateChange}
+                inline
+              />
+            </div>
           )}
-        </label>
 
-        <br />
+          <br />
 
-        {isTimeAvailable && (
-          <>
-            <label>
-              Namn:
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <br />
-            <label>
-              E-post:
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <br />
-            <label>
-              Tatueringsstil:
-              <select
-                name="tattooStyle"
-                value={formData.tattooStyle}
-                onChange={handleChange}
-                required>
-                <option value="">Välj en stil</option>
-                <option value="Old School">Old School (Traditional)</option>
-                <option value="New School">New School</option>
-                <option value="Realism">Realism</option>
-                <option value="Black & Grey">Black & Grey</option>
-                <option value="Dotwork">Dotwork</option>
-                <option value="Linework">Linework</option>
-                <option value="Watercolor">Watercolor</option>
-                <option value="Geometric">Geometrisk</option>
-                <option value="Tribal">Tribal</option>
-                <option value="Japanese">Japansk (Irezumi)</option>
-                <option value="Chicano">Chicano</option>
-                <option value="Neo Traditional">Neo Traditional</option>
-                <option value="Minimalistisk">Minimalistisk</option>
-                <option value="Sketch">Sketch/Illustrativ</option>
-                <option value="Trash Polka">Trash Polka</option>
-                <option value="Fineline">Fineline</option>
-                <option value="Surrealism">Surrealism</option>
-                <option value="Biomekanisk">Biomekanisk</option>
-                <option value="Celtic">Keltisk</option>
-                <option value="Ignorant Style">Ignorant Style</option>
-              </select>
-            </label>
+          <label>
+            Välj tid för tatuering:
+            <select
+              name="tattooTime"
+              value={formData.tattooTime}
+              onChange={handleChange}
+              required
+              style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}>
+              <option value="">Välj tid</option>
+              <option value="1">1 timme</option>
+              <option value="2">2 timmar</option>
+            </select>
+          </label>
 
-            <br />
-            <label>
-              Övrig information:
-              <textarea
-                name="additionalInfo"
-                value={formData.additionalInfo}
-                onChange={handleChange}
-              />
-            </label>
-            <br />
+          <br />
 
-            <label>
-              Bifoga referensbild (valfritt):
-              <input
-                type="file"
-                name="referenceImage"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </label>
-          </>
-        )}
+          <label>
+            Starttid för tatuering:
+            <select
+              name="time"
+              value={formData.time}
+              onChange={handleTimeChange}
+              required
+              style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}>
+              <option value="">Välj starttid</option>
+              {getAvailableStartTimes().map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+            {formData.tattooTime === '2' && (
+              <small style={{ color: 'red' }}>
+                Obs: Vissa tider är inte tillgängliga för 2-timmarsbokningar på
+                grund av lunch eller stängning.
+              </small>
+            )}
+          </label>
 
-        <button type="submit" disabled={!isTimeAvailable}>
-          Skicka bokning
-        </button>
-      </form>
-    </main>
+          <br />
+
+          {isTimeAvailable && (
+            <>
+              <label>
+                Namn:
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    marginTop: '0.3rem',
+                  }}
+                />
+              </label>
+              <br />
+              <label>
+                E-post:
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    marginTop: '0.3rem',
+                  }}
+                />
+              </label>
+              <br />
+              <label>
+                Tatueringsstil:
+                <select
+                  name="tattooStyle"
+                  value={formData.tattooStyle}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    marginTop: '0.3rem',
+                  }}>
+                  <option value="">Välj en stil</option>
+                  <option value="Old School">Old School (Traditional)</option>
+                  <option value="New School">New School</option>
+                  <option value="Realism">Realism</option>
+                  <option value="Black & Grey">Black & Grey</option>
+                  <option value="Dotwork">Dotwork</option>
+                  <option value="Linework">Linework</option>
+                  <option value="Watercolor">Watercolor</option>
+                  <option value="Geometric">Geometrisk</option>
+                  <option value="Tribal">Tribal</option>
+                  <option value="Japanese">Japansk (Irezumi)</option>
+                  <option value="Chicano">Chicano</option>
+                  <option value="Neo Traditional">Neo Traditional</option>
+                  <option value="Minimalistisk">Minimalistisk</option>
+                  <option value="Sketch">Sketch/Illustrativ</option>
+                  <option value="Trash Polka">Trash Polka</option>
+                  <option value="Fineline">Fineline</option>
+                  <option value="Surrealism">Surrealism</option>
+                  <option value="Biomekanisk">Biomekanisk</option>
+                  <option value="Celtic">Keltisk</option>
+                  <option value="Ignorant Style">Ignorant Style</option>
+                </select>
+              </label>
+
+              <br />
+              <label>
+                Övrig information:
+                <textarea
+                  name="additionalInfo"
+                  value={formData.additionalInfo}
+                  onChange={handleChange}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    marginTop: '0.3rem',
+                  }}
+                />
+              </label>
+              <br />
+
+              <label>
+                Bifoga referensbild (valfritt):
+                <input
+                  type="file"
+                  name="referenceImage"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ marginTop: '0.3rem' }}
+                />
+              </label>
+            </>
+          )}
+
+          <button
+            type="submit"
+            disabled={!isTimeAvailable}
+            style={{
+              backgroundColor: '#d4af37', // matchar gold i temat
+              color: '#181716', // matchar background i temat
+              border: 'none',
+              padding: '1rem 2.5rem',
+              fontWeight: 'bold',
+              fontSize: '1.1rem',
+              cursor: 'pointer',
+              borderRadius: '5px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              transition: 'background-color 0.2s',
+              marginTop: '1rem',
+              width: '100%',
+              maxWidth: '500px',
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = '#ffd700')
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = '#d4af37')
+            }>
+            Skicka bokning
+          </button>
+        </form>
+      </main>
+
+      <footer className="footer">
+        © 2025 Tottes Tattoo – Alla rättigheter reserverade.
+      </footer>
+    </>
   );
 };
 
