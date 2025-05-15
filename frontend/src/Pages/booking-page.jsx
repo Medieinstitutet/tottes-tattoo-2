@@ -16,7 +16,9 @@ const BookingPage = () => {
     additionalInfo: '',
   });
 
+  const [referenceImage, setReferenceImage] = useState(null);
   const [isTimeAvailable, setIsTimeAvailable] = useState(false);
+  const [showDatepicker, setShowDatepicker] = useState(false); // ✅ Ny state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +41,6 @@ const BookingPage = () => {
     ];
 
     if (formData.tattooTime === '2') {
-      // Blockera tider som skulle krocka med lunch (kl 12) eller stängning
       return allTimes.filter((time) => time !== '11:00' && time !== '17:00');
     }
 
@@ -52,6 +53,7 @@ const BookingPage = () => {
       date: date,
     }));
     checkTimeAvailability(date);
+    setShowDatepicker(false); // ✅ Stänger kalendern direkt
   };
 
   const handleTimeChange = (e) => {
@@ -68,6 +70,14 @@ const BookingPage = () => {
       setIsTimeAvailable(true);
     } else {
       setIsTimeAvailable(false);
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setReferenceImage(file);
+      console.log('Bifogad bild:', file);
     }
   };
 
@@ -88,13 +98,25 @@ const BookingPage = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Välj datum:
-          <DatePicker
-            selected={formData.date}
-            onChange={handleDateChange}
-            dateFormat="yyyy-MM-dd"
-            required
+          <input
+            type="text"
+            readOnly
+            value={formData.date.toISOString().split('T')[0]}
+            onClick={() => setShowDatepicker(!showDatepicker)}
+            style={{ cursor: 'pointer' }}
           />
         </label>
+
+        {showDatepicker && (
+          <div style={{ marginBottom: '1rem' }}>
+            <DatePicker
+              selected={formData.date}
+              onChange={handleDateChange}
+              inline
+            />
+          </div>
+        )}
+
         <br />
 
         <label>
@@ -201,6 +223,16 @@ const BookingPage = () => {
               />
             </label>
             <br />
+
+            <label>
+              Bifoga referensbild (valfritt):
+              <input
+                type="file"
+                name="referenceImage"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+            </label>
           </>
         )}
 
