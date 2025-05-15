@@ -18,7 +18,7 @@ const BookingPage = () => {
 
   const [referenceImage, setReferenceImage] = useState(null);
   const [isTimeAvailable, setIsTimeAvailable] = useState(false);
-  const [showDatepicker, setShowDatepicker] = useState(false); // ✅ Ny state
+  const [showDatepicker, setShowDatepicker] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,7 +53,7 @@ const BookingPage = () => {
       date: date,
     }));
     checkTimeAvailability(date);
-    setShowDatepicker(false); // ✅ Stänger kalendern direkt
+    setShowDatepicker(false);
   };
 
   const handleTimeChange = (e) => {
@@ -81,9 +81,41 @@ const BookingPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Bokningsdata:', formData);
+
+    const data = new FormData();
+
+    data.append('name', formData.name);
+    data.append('email', formData.email);
+    data.append('date', formData.date.toISOString());
+    data.append('time', formData.time);
+    data.append('tattooTime', formData.tattooTime);
+    data.append('tattooStyle', formData.tattooStyle);
+    data.append('additionalInfo', formData.additionalInfo);
+
+    if (referenceImage) {
+      data.append('file', referenceImage);
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/bookings', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Bokningen lyckades:', result);
+        alert('Tack! Din bokning har skickats.');
+      } else {
+        console.error('Fel vid bokning:', response.statusText);
+        alert('Något gick fel. Försök igen.');
+      }
+    } catch (err) {
+      console.error('Fetch-fel:', err);
+      alert('Kunde inte skicka bokningen.');
+    }
   };
 
   return (
