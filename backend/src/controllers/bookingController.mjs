@@ -1,40 +1,26 @@
-import { saveBooking, readBookings } from '../models/bookingModel.mjs';
+import { saveBooking, readBookings, findOccupiedSlots } from '../models/bookingModel.mjs';
 
 export const createBooking = async (req, res, next) => {
   try {
-    const { name, email, date, time, type } = req.body;
+    const { name, email, date, time, type, duration } = req.body;
     const file = req.file;
 
-    if (!name || !email || !date || !time || !type || !file) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'All fields are required.' });
+    if (!name || !email || !date || !time || !type || !file || !duration) {
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
 
     if (!['tattoo', 'consultation'].includes(type.toLowerCase())) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Invalid booking type.' });
+      return res.status(400).json({ success: false, message: 'Invalid booking type.' });
     }
 
     const [hourStr, minuteStr] = time.split(':');
     const hour = parseInt(hourStr, 10);
     const minute = parseInt(minuteStr, 10);
 
-    if (
-      isNaN(hour) ||
-      isNaN(minute) ||
-      hour < 0 ||
-      hour > 23 ||
-      minute < 0 ||
-      minute > 59
-    ) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Invalid time format.' });
+    if (isNaN(hour) || isNaN(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+      return res.status(400).json({ success: false, message: 'Invalid time format.' });
     }
 
-    // Reject bookings during lunch
     if (hour === 12) {
       return res.status(400).json({
         success: false,
@@ -42,7 +28,6 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // Reject bookings outside working hours
     if (hour < 9 || hour >= 18) {
       return res.status(400).json({
         success: false,
@@ -50,9 +35,8 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // Reject weekend bookings
     const bookingDate = new Date(`${date}T${time}`);
-    const dayOfWeek = bookingDate.getDay(); // 0 = Sunday, 6 = Saturday
+    const dayOfWeek = bookingDate.getDay();
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       return res.status(400).json({
         success: false,
@@ -60,22 +44,34 @@ export const createBooking = async (req, res, next) => {
       });
     }
 
-    // Check if this time is already booked
-    const existingBookings = await readBookings();
-    const isTaken = existingBookings.some(
-      (b) => b.date === date && b.time === time
-    );
-    if (isTaken) {
+    const durationNum = parseInt(duration, 10);
+    if (isNaN(durationNum) || durationNum < 60 || durationNum > 480) {
       return res.status(400).json({
         success: false,
-        message: 'That time slot is already booked. Please choose another.',
+        message: 'Duration must be between 60 and 480 minutes.',
       });
     }
 
-    // Assign a random tattooer
+    const existingBookings = await findOccupiedSlots();
+    const startTime = new Date(`${date}T${time}:00`);
+    const endTime = new Date(startTime.getTime() + durationNum * 60 * 1000);
+    const isOverlapping = existingBookings.some(b => {
+      if (b.date !== date) return false;
+      const [bHour, bMinute] = b.time.split(':').map(Number);
+      const bStart = new Date(`${date}T${b.time}:00`);
+      const bEnd = new Date(bStart.getTime() + b.duration * 60 * 1000);
+      return startTime < bEnd && endTime > bStart;
+    });
+
+    if (isOverlapping) {
+      return res.status(400).json({
+        success: false,
+        message: 'The time slot overlaps with another booking.',
+      });
+    }
+
     const tattooers = ['Totte', 'Emma', 'Johan', 'Nina', 'Alex'];
-    const assignedTattooer =
-      tattooers[Math.floor(Math.random() * tattooers.length)];
+    const assignedTattooer = tattooers[Math.floor(Math.random() * tattooers.length)];
 
     const booking = {
       id: Date.now(),
@@ -83,6 +79,7 @@ export const createBooking = async (req, res, next) => {
       email,
       date,
       time,
+      duration: durationNum,
       type: type.toLowerCase(),
       tattooer: assignedTattooer,
       filePath: file.path,
@@ -110,13 +107,7 @@ export const getBookings = async (req, res, next) => {
 
 export const getOccupiedSlots = async (req, res, next) => {
   try {
-    const bookings = await readBookings();
-
-    const occupied = bookings.map((b) => ({
-      date: b.date,
-      time: b.time,
-    }));
-
+    const occupied = await findOccupiedSlots();
     res.json(occupied);
   } catch (err) {
     next(err);
@@ -159,7 +150,7 @@ export const getAvailableSlots = async (req, res, next) => {
         if (!bookedSlots.includes(slotTime)) {
           availableSlots.push(slotTime);
         }
-        current.setMinutes(current.getMinutes() + 60);
+        current.setMinutes(current.getMinutes() + 60); 
       }
     });
 
