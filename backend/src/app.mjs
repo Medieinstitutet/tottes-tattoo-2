@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files
-app.use('/uploads', express.static('../uploads')); // Notera: ändrat till '../uploads' eftersom vi är i src-mappen
+app.use('/uploads', express.static('./uploads'));
 
 // API routes
 app.use('/api/v1/bookings', bookingRoutes);
