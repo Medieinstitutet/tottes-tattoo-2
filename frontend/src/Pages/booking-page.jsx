@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/booking-page.css';
 import tattooImage from '../assets/tattoo.jpg';
 import Navigation from '../Components/NavBar';
+import Footer from '../Components/Footer';
 
 const BookingPage = () => {
   const [formData, setFormData] = useState({
@@ -337,9 +338,7 @@ const BookingPage = () => {
         </form>
       </main>
 
-      <footer className='footer'>
-        © 2025 Tottes Tattoo – Alla rättigheter reserverade.
-      </footer>
+      <Footer />
     </>
   );
 };
