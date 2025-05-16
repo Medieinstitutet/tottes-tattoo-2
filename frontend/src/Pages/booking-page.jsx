@@ -170,6 +170,29 @@ const BookingPage = () => {
           <br />
 
           <label>
+            Välj tatuerare:
+            <select
+              name="tattooArtist"
+              value={formData.tattooArtist}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.3rem',
+              }}>
+              <option value="">Välj en tatuerare</option>
+              <option value="Totte">Totte</option>
+              <option value="Erik">Erik</option>
+              <option value="Marcus">Marcus</option>
+              <option value="Anders">Anders</option>
+              <option value="Amanda">Amanda</option>
+            </select>
+          </label>
+
+          <br />
+
+          <label>
             Välj tid för tatuering:
             <select
               name="tattooTime"
