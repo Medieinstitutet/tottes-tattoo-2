@@ -1,0 +1,152 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background-color: #000;
+}
+
+#root {
+  background-color: #000;
+  min-height: 100vh;
+}
+
+body {
+  background-color: #000;
+}
+
+main {
+  background-color: #000;
+  padding: 4rem 2rem;
+  font-family: 'Georgia', serif;
+  color: #f1f1f1;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+  background-image: url('/assets/tattoo.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  min-height: 100vh; /* Täcker minst hela viewport */
+  display: flex;
+  justify-content: flex-start;
+  align-items: center; /* Centrerar horisontellt */
+  flex-direction: column;
+  flex-grow: 1; /* Gör att main kan växa med innehållet */
+}
+
+form {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7);
+  max-width: 500px;
+  width: 100%;
+  margin-top: 150px;
+  border: 2px solid #d4af37;
+}
+
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #d4af37;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+}
+
+label {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  display: block;
+  color: #fff;
+}
+input,
+textarea,
+button,
+.react-datepicker-wrapper {
+  padding: 0.8rem;
+  font-size: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  border: 2px solid #d4af37;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='date'],
+input[type='time'],
+textarea {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #d4af37;
+  color: white;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #e6c94f;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+.react-datepicker__wrapper {
+  margin-bottom: 1rem;
+  border: 2px solid #d4af37;
+}
+
+input:hover,
+select:hover,
+textarea:hover,
+button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.react-datepicker__header {
+  background-color: #d4af37;
+  border-bottom: none;
+}
+
+.react-datepicker__current-month {
+  color: white;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #b8952b;
+  color: white;
+}
+
+.react-datepicker__day:hover {
+  background-color: #e6c94f;
+}
+
+.footer {
+  background: #231a15;
+  color: #e0e0e0;
+  text-align: center;
+  padding: 2rem 1rem 1rem 1rem;
+  border-top: 2px solid #d4af37;
+  margin-top: 0.1rem;
+  font-family: 'Merriweather', serif;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 1.5rem 0.5rem 1rem 0.5rem;
+    font-size: 0.95rem;
+  }
+}
