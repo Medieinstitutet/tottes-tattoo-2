@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(logger);
 }
 
-app.use('api/v1/bookings', bookingRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
   next(

@@ -7,11 +7,7 @@ export default class BookingRepository {
   }
 
   async findById(id) {
-    // if (!booking) {
-    //   throw new AppError('Booking not found', 404);
-    // }
-
-    return await Booking.findOne({ id: id });
+    return await Booking.findOne({ _id: id });
   }
 
   async add(booking) {
@@ -19,13 +15,7 @@ export default class BookingRepository {
   }
 
   async update(id, updatedBooking) {
-    const booking = await Booking.findOne({ id: id });
-
-    // if (!booking) {
-    //   throw new AppError('Booking not found', 404);
-    // }
-
-    console.log(updatedBooking);
+    const booking = await Booking.findOne({ _id: id });
     Object.assign(booking, updatedBooking);
     return await booking.save();
   }

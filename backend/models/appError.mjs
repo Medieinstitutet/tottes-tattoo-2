@@ -22,8 +22,7 @@ export default class AppError extends Error {
         this.status = 'Internal server error';
         break;
       default:
-        this.status =
-          'Unknown error. This is possibly due to the server reciving an unexpected http post.';
+        this.status = 'Unknown error.';
     }
 
     Error.captureStackTrace(this, this.constructor);

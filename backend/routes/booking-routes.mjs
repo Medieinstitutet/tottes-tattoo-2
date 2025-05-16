@@ -11,9 +11,9 @@ const bookingRouter = express.Router();
 
 bookingRouter.route('/').get(listAllBookings).post(addBooking);
 bookingRouter
-  .route('/id/:id')
+  .route('/:id')
   .get(findBookingById)
   .put(updateBooking)
-  .post(removeBooking);
+  .delete(removeBooking);
 
 export default bookingRouter;
