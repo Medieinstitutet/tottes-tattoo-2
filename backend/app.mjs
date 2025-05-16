@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import bookingRouter from './routes/booking-routes.mjs';
 import AppError from './models/appError.mjs';
-import connectDb from './src/db/db.mjs';
+import connectDb from './db/db.mjs';
 // import { logger } from './middleware/logger.mjs';
 // import errorHandler from './middleware/errorHandler.mjs';
 
