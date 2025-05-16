@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import bookingRouter from './routes/booking-routes.mjs';
 import AppError from './models/appError.mjs';
 import connectDb from './db/db.mjs';
-// import { logger } from './middleware/logger.mjs';
-// import errorHandler from './middleware/errorHandler.mjs';
+import { logger } from './middleware/logger.mjs';
+import errorHandler from './middleware/errorHandler.mjs';
 
 dotenv.config({ path: './config/settings.env' });
 
@@ -15,9 +15,7 @@ const app = express();
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {
-  // TODO - implement logger
-  //
-  // app.use(logger);
+  app.use(logger);
 }
 
 app.use('api/v1/bookings', bookingRouter);
@@ -31,7 +29,6 @@ app.all('*', (req, res, next) => {
   );
 });
 
-// TODO - Implement errorHandler
-// app.use(errorHandler);
+app.use(errorHandler);
 
 export { app };

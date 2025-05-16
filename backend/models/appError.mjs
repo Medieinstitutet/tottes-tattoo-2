@@ -18,13 +18,12 @@ export default class AppError extends Error {
         this.status =
           'Not found. The server cannot find the requested resource';
         break;
+      case statusCode && statusCode.toString().startsWith('5'):
+        this.status = 'Internal server error';
+        break;
       default:
-        if (statusCode) {
-          this.status = `Status code ${statusCode} recived.`;
-        } else {
-          this.status =
-            'Unknown error. This is possibly due to the server reciving an unexpected http post.';
-        }
+        this.status =
+          'Unknown error. This is possibly due to the server reciving an unexpected http post.';
     }
 
     Error.captureStackTrace(this, this.constructor);
