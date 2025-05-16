@@ -35,13 +35,8 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  picture: {
+  imageUrl: {
     type: String,
-    default: '',
-    match: [
-      /^image\/(png|jpg|webp)$/,
-      'Picture must be of type png, jpg, or webp.', // This might break if regex returns true in unexpected part of base64 string.
-    ],
   },
 });
 
