@@ -474,7 +474,7 @@ export default function StartPage() {
               berättelser, allt med fokus på detaljrikedom och kvalitet som
               håller.
             </p>
-            <p>
+            <p style={{ marginTop: '1.5rem' }}>
               <b>Öppettider:</b>
               <br />
               Måndag - Fredag: 09:00 - 18:00
