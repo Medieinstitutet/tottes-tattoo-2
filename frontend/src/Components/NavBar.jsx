@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const NavBar = styled.nav`
   width: 100%;
@@ -54,13 +54,21 @@ const NavLinks = styled.ul`
   }
 `;
 
-const NavLink = styled.li`
+const NavItem = styled.li``;
+
+const StyledNavLink = styled(NavLink)`
   color: ${({ theme }) => theme.colors.text};
   font-size: 1.1rem;
   font-family: ${({ theme }) => theme.fonts.main};
   opacity: 0.85;
   cursor: pointer;
+  text-decoration: none;
   transition: color 0.2s;
+  &.active {
+    color: ${({ theme }) => theme.colors.gold};
+    font-weight: bold;
+    opacity: 1;
+  }
   &:hover {
     color: ${({ theme }) => theme.colors.gold};
     opacity: 1;
@@ -78,25 +86,20 @@ export default function Navigation() {
           TOTTES <span>TATTOO</span>
         </Logo>
         <NavLinks>
-          <NavLink>
-            <Link to='/' style={{ color: 'inherit', textDecoration: 'none' }}>
+          <NavItem>
+            <StyledNavLink to='/' end>
               Hem
-            </Link>
-          </NavLink>
-          <NavLink>
-            <Link
-              to='/portfolio'
-              style={{ color: 'inherit', textDecoration: 'none' }}>
-              Portfolio
-            </Link>
-          </NavLink>
-          <NavLink>
-            <Link
-              to='/booking'
-              style={{ color: 'inherit', textDecoration: 'none' }}>
-              Bokning
-            </Link>
-          </NavLink>
+            </StyledNavLink>
+          </NavItem>
+          <NavItem>
+            <StyledNavLink to='/portfolio'>Portfolio</StyledNavLink>
+          </NavItem>
+          <NavItem>
+            <StyledNavLink to='/booking'>Bokning</StyledNavLink>
+          </NavItem>
+          <NavItem>
+            <StyledNavLink to='/admin'>Admin</StyledNavLink>
+          </NavItem>
         </NavLinks>
       </NavContent>
     </NavBar>
