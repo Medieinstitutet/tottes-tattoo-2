@@ -12,7 +12,11 @@ export const findBookingById = catchErrorAsync(async (req, res) => {
 });
 
 export const addBooking = catchErrorAsync(async (req, res) => {
-  const booking = await new BookingRepository().add(req.body);
+  const bookingData = { ...req.body };
+  if (req.file?.path) {
+    bookingData.imageUrl = req.file.path;
+  }
+  const booking = await new BookingRepository().add(bookingData);
   res.status(201).json({ success: true, data: booking });
 });
 

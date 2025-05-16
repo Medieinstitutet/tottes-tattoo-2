@@ -5,13 +5,14 @@ import AppError from './models/appError.mjs';
 import connectDb from './db/db.mjs';
 import { logger } from './middleware/logger.mjs';
 import errorHandler from './middleware/errorHandler.mjs';
-
+import cors from 'cors';
 dotenv.config({ path: './config/settings.env' });
 
 connectDb();
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 if (process.env.NODE_ENV === 'development') {

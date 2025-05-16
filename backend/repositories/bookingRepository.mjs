@@ -1,5 +1,5 @@
-import AppError from '../models/appError.mjs';
 import Booking from '../models/Booking.mjs';
+import upload from '../utilities/imageUpload.mjs';
 
 export default class BookingRepository {
   async listAll() {

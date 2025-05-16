@@ -34,6 +34,7 @@ const bookingSchema = new mongoose.Schema({
   description: {
     type: String,
     trim: true,
+    default: '',
   },
   imageUrl: {
     type: String,

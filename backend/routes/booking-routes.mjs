@@ -1,4 +1,5 @@
 import express from 'express';
+import upload from '../utilities/imageUpload.mjs';
 import {
   listAllBookings,
   findBookingById,
@@ -9,7 +10,11 @@ import {
 
 const bookingRouter = express.Router();
 
-bookingRouter.route('/').get(listAllBookings).post(addBooking);
+bookingRouter
+  .route('/')
+  .get(listAllBookings)
+  .post(upload.single('file'), addBooking);
+
 bookingRouter
   .route('/:id')
   .get(findBookingById)
