@@ -4,6 +4,8 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from './Pages/theme';
 import StartPage from './Pages/start-page.jsx';
 import BookingPage from './Pages/booking-page.jsx';
+import PortfolioPage from './Pages/portfolio-page.jsx';
+
 
 const App = () => {
   return (
@@ -12,6 +14,8 @@ const App = () => {
         <Routes>
           <Route path='/' element={<StartPage />} />
           <Route path='/booking' element={<BookingPage />} />
+          <Route path="/portfolio" element={<PortfolioPage />} />
+
         </Routes>
       </Router>
     </ThemeProvider>
