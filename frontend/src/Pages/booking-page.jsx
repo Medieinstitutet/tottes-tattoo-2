@@ -144,7 +144,7 @@ const BookingPage = () => {
           <label>
             Välj datum:
             <input
-              type="text"
+              type='text'
               readOnly
               value={formData.date.toISOString().split('T')[0]}
               onClick={() => setShowDatepicker(!showDatepicker)}
@@ -172,7 +172,7 @@ const BookingPage = () => {
           <label>
             Välj tatuerare:
             <select
-              name="tattooArtist"
+              name='tattooArtist'
               value={formData.tattooArtist}
               onChange={handleChange}
               required
@@ -181,12 +181,12 @@ const BookingPage = () => {
                 padding: '0.5rem',
                 marginTop: '0.3rem',
               }}>
-              <option value="">Välj en tatuerare</option>
-              <option value="Totte">Totte</option>
-              <option value="Erik">Erik</option>
-              <option value="Marcus">Marcus</option>
-              <option value="Anders">Anders</option>
-              <option value="Amanda">Amanda</option>
+              <option value=''>Välj en tatuerare</option>
+              <option value='Totte'>Totte</option>
+              <option value='Erik'>Erik</option>
+              <option value='Marcus'>Marcus</option>
+              <option value='Anders'>Anders</option>
+              <option value='Amanda'>Amanda</option>
             </select>
           </label>
 
@@ -195,14 +195,14 @@ const BookingPage = () => {
           <label>
             Välj tid för tatuering:
             <select
-              name="tattooTime"
+              name='tattooTime'
               value={formData.tattooTime}
               onChange={handleChange}
               required
               style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}>
-              <option value="">Välj tid</option>
-              <option value="1">1 timme</option>
-              <option value="2">2 timmar</option>
+              <option value=''>Välj tid</option>
+              <option value='1'>1 timme</option>
+              <option value='2'>2 timmar</option>
             </select>
           </label>
 
@@ -211,12 +211,12 @@ const BookingPage = () => {
           <label>
             Starttid för tatuering:
             <select
-              name="time"
+              name='time'
               value={formData.time}
               onChange={handleTimeChange}
               required
               style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}>
-              <option value="">Välj starttid</option>
+              <option value=''>Välj starttid</option>
               {getAvailableStartTimes().map((time) => (
                 <option key={time} value={time}>
                   {time}
@@ -238,8 +238,8 @@ const BookingPage = () => {
               <label>
                 Namn:
                 <input
-                  type="text"
-                  name="name"
+                  type='text'
+                  name='name'
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -254,8 +254,8 @@ const BookingPage = () => {
               <label>
                 E-post:
                 <input
-                  type="email"
-                  name="email"
+                  type='email'
+                  name='email'
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -270,7 +270,7 @@ const BookingPage = () => {
               <label>
                 Tatueringsstil:
                 <select
-                  name="tattooStyle"
+                  name='tattooStyle'
                   value={formData.tattooStyle}
                   onChange={handleChange}
                   required
@@ -279,27 +279,27 @@ const BookingPage = () => {
                     padding: '0.5rem',
                     marginTop: '0.3rem',
                   }}>
-                  <option value="">Välj en stil</option>
-                  <option value="Old School">Old School (Traditional)</option>
-                  <option value="New School">New School</option>
-                  <option value="Realism">Realism</option>
-                  <option value="Black & Grey">Black & Grey</option>
-                  <option value="Dotwork">Dotwork</option>
-                  <option value="Linework">Linework</option>
-                  <option value="Watercolor">Watercolor</option>
-                  <option value="Geometric">Geometrisk</option>
-                  <option value="Tribal">Tribal</option>
-                  <option value="Japanese">Japansk (Irezumi)</option>
-                  <option value="Chicano">Chicano</option>
-                  <option value="Neo Traditional">Neo Traditional</option>
-                  <option value="Minimalistisk">Minimalistisk</option>
-                  <option value="Sketch">Sketch/Illustrativ</option>
-                  <option value="Trash Polka">Trash Polka</option>
-                  <option value="Fineline">Fineline</option>
-                  <option value="Surrealism">Surrealism</option>
-                  <option value="Biomekanisk">Biomekanisk</option>
-                  <option value="Celtic">Keltisk</option>
-                  <option value="Ignorant Style">Ignorant Style</option>
+                  <option value=''>Välj en stil</option>
+                  <option value='Old School'>Old School (Traditional)</option>
+                  <option value='New School'>New School</option>
+                  <option value='Realism'>Realism</option>
+                  <option value='Black & Grey'>Black & Grey</option>
+                  <option value='Dotwork'>Dotwork</option>
+                  <option value='Linework'>Linework</option>
+                  <option value='Watercolor'>Watercolor</option>
+                  <option value='Geometric'>Geometrisk</option>
+                  <option value='Tribal'>Tribal</option>
+                  <option value='Japanese'>Japansk (Irezumi)</option>
+                  <option value='Chicano'>Chicano</option>
+                  <option value='Neo Traditional'>Neo Traditional</option>
+                  <option value='Minimalistisk'>Minimalistisk</option>
+                  <option value='Sketch'>Sketch/Illustrativ</option>
+                  <option value='Trash Polka'>Trash Polka</option>
+                  <option value='Fineline'>Fineline</option>
+                  <option value='Surrealism'>Surrealism</option>
+                  <option value='Biomekanisk'>Biomekanisk</option>
+                  <option value='Celtic'>Keltisk</option>
+                  <option value='Ignorant Style'>Ignorant Style</option>
                 </select>
               </label>
 
@@ -307,7 +307,7 @@ const BookingPage = () => {
               <label>
                 Övrig information:
                 <textarea
-                  name="additionalInfo"
+                  name='additionalInfo'
                   value={formData.additionalInfo}
                   onChange={handleChange}
                   style={{
@@ -322,9 +322,9 @@ const BookingPage = () => {
               <label>
                 Bifoga referensbild (valfritt):
                 <input
-                  type="file"
-                  name="referenceImage"
-                  accept="image/*"
+                  type='file'
+                  name='referenceImage'
+                  accept='image/*'
                   onChange={handleImageUpload}
                   style={{ marginTop: '0.3rem' }}
                 />
@@ -333,7 +333,7 @@ const BookingPage = () => {
           )}
 
           <button
-            type="submit"
+            type='submit'
             disabled={!isTimeAvailable}
             style={{
               backgroundColor: '#d4af37', // matchar gold i temat
@@ -360,7 +360,6 @@ const BookingPage = () => {
           </button>
         </form>
       </main>
-
       <Footer />
     </>
   );
