@@ -60,7 +60,7 @@ export const createBooking = async (req, res, next) => {
     }
 
     // Lista över alla tatuerare
-    const tattooers = ['Totte', 'Emma', 'Johan', 'Nina', 'Alex'];
+    const tattooers = ['Totte', 'Erik', 'Marcus', 'Anders', 'Amanda'];
     // Hitta tillgängliga tatuerare (de som inte är bokade)
     const availableTattooers = tattooers.filter(t => !bookedTattooers.has(t));
     if (availableTattooers.length === 0) {
