@@ -24,7 +24,7 @@ main {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  min-height: 100vh; /* Täcker minst hela viewport */
+  min-height: 85vh; /* Täcker minst hela viewport */
   display: flex;
   justify-content: flex-start;
   align-items: center; /* Centrerar horisontellt */

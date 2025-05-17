@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/booking-page.css';
 import tattooImage from '../assets/tattoo.jpg';
 import Navigation from '../Components/NavBar';
+import Footer from '../Components/Footer';
 
 const BookingPage = () => {
   const [formData, setFormData] = useState({
@@ -127,8 +128,7 @@ const BookingPage = () => {
           backgroundImage: `url(${tattooImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          minHeight: '100vh',
-          padding: '4rem 2rem',
+          padding: '0 2rem',
           fontFamily: "'Georgia', serif",
           color: '#f1f1f1',
           textShadow: '2px 2px 10px rgba(0, 0, 0, 0.7)',
@@ -139,7 +139,11 @@ const BookingPage = () => {
         }}>
         <form
           onSubmit={handleSubmit}
-          style={{ width: '100%', maxWidth: '500px' }}>
+          style={{
+            width: '100%',
+            maxWidth: '500px',
+            marginTop: '2rem !important',
+          }}>
           <label>
             Välj datum:
             <input
@@ -165,6 +169,29 @@ const BookingPage = () => {
               />
             </div>
           )}
+
+          <br />
+
+          <label>
+            Välj tatuerare:
+            <select
+              name='tattooArtist'
+              value={formData.tattooArtist}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.3rem',
+              }}>
+              <option value=''>Välj en tatuerare</option>
+              <option value='Totte'>Totte</option>
+              <option value='Erik'>Erik</option>
+              <option value='Marcus'>Marcus</option>
+              <option value='Anders'>Anders</option>
+              <option value='Amanda'>Amanda</option>
+            </select>
+          </label>
 
           <br />
 
@@ -336,10 +363,7 @@ const BookingPage = () => {
           </button>
         </form>
       </main>
-
-      <footer className='footer'>
-        © 2025 Tottes Tattoo – Alla rättigheter reserverade.
-      </footer>
+      <Footer />
     </>
   );
 };

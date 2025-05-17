@@ -11,6 +11,7 @@ import studio2 from '../assets/studio2.jpg';
 import studio3 from '../assets/studio3.jpg';
 import studio4 from '../assets/studio4.jpg';
 import { Link } from 'react-router-dom';
+import Navigation from '../Components/NavBar';
 
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.colors.background};
@@ -20,77 +21,9 @@ const Wrapper = styled.div`
   overflow-x: hidden;
 `;
 
-const NavBar = styled.nav`
-  width: 100%;
-  background: #2a1a13;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-`;
-
-const NavContent = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.2rem 2rem;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-  }
-`;
-
-const Logo = styled.div`
-  font-family: ${({ theme }) => theme.fonts.accent};
-  font-size: 1.7rem;
-  color: ${({ theme }) => theme.colors.gold};
-  letter-spacing: 2px;
-  font-weight: bold;
-  span {
-    color: ${({ theme }) => theme.colors.text};
-    font-weight: normal;
-    font-size: 1.2rem;
-    margin-left: 0.3rem;
-    font-family: ${({ theme }) => theme.fonts.main};
-  }
-`;
-
-const NavLinks = styled.ul`
-  display: flex;
-  gap: 2.5rem;
-  list-style: none;
-  margin: 0;
-
-  @media (max-width: 768px) {
-    gap: 1.5rem;
-    padding: 0;
-  }
-`;
-
-const NavLink = styled.li`
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 1.1rem;
-  font-family: ${({ theme }) => theme.fonts.main};
-  opacity: 0.85;
-  cursor: default;
-  transition: color 0.2s;
-  &:hover {
-    color: ${({ theme }) => theme.colors.gold};
-    opacity: 1;
-  }
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
-  }
-`;
-
 const Hero = styled.section`
   width: 100vw;
-  min-height: 70vh;
+  min-height: 45vh;
   background: linear-gradient(rgba(24, 23, 22, 0.8), rgba(24, 23, 22, 0.8)),
     url(${(props) => props.bg}) center/cover;
   display: flex;
@@ -99,7 +32,7 @@ const Hero = styled.section`
   justify-content: center;
   text-align: center;
   border-bottom: 2px solid ${({ theme }) => theme.colors.gold};
-  padding-top: 6.5rem;
+  padding-top: 1.5rem;
   margin: 0;
 `;
 
@@ -118,7 +51,7 @@ const HeroTitle = styled.h1`
   color: ${({ theme }) => theme.colors.gold};
   font-size: 3rem;
   letter-spacing: 2px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 
   @media (max-width: 768px) {
     font-size: 2rem;
@@ -128,7 +61,7 @@ const HeroTitle = styled.h1`
 const HeroSubtitle = styled.p`
   color: ${({ theme }) => theme.colors.textSoft};
   font-size: 1.3rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
 
   @media (max-width: 768px) {
     font-size: 1.1rem;
@@ -399,255 +332,235 @@ export default function StartPage() {
   }, [studioImages.length]);
 
   return (
-    <Wrapper>
-      <NavBar>
-        <NavContent>
-          <Logo>
-            TOTTES <span>TATTOO</span>
-          </Logo>
-          <NavLinks>
-            <NavLink>
-              <Link to='/' style={{ color: 'inherit', textDecoration: 'none' }}>
-                Hem
-              </Link>
-            </NavLink>
-            <NavLink>
-              <Link
-                to='/portfolio'
-                style={{ color: 'inherit', textDecoration: 'none' }}>
-                Portfolio
-              </Link>
-            </NavLink>
-            <NavLink>
-              <Link
-                to='/booking'
-                style={{ color: 'inherit', textDecoration: 'none' }}>
-                Bokning
-              </Link>
-            </NavLink>
-          </NavLinks>
-        </NavContent>
-      </NavBar>
-      <Hero bg={tattooHero}>
-        <HeroContent>
-          <HeroTitle>Välkommen till Tottes Tattoo</HeroTitle>
-          <HeroSubtitle>
-            Din resa mot en unik tatuering börjar här i hjärtat av Kungälv
-          </HeroSubtitle>
-          <HeroSubtitle style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>
-            Med över 15 års erfarenhet och en passion för fantasy-motiv med hög
-            detaljrikedom,
-            <br />
-            skapar vi tatueringar som berättar din unika historia.
-          </HeroSubtitle>
-          <HeroButton as={Link} to='/booking'>
-            Boka din tid
-          </HeroButton>
-        </HeroContent>
-      </Hero>
+    <>
+      <Navigation />
+      <Wrapper>
+        <Hero bg={tattooHero}>
+          <HeroContent>
+            <HeroTitle>Välkommen till Tottes Tattoo</HeroTitle>
+            <HeroSubtitle>
+              Din resa mot en unik tatuering börjar här i hjärtat av Kungälv
+            </HeroSubtitle>
+            <HeroSubtitle
+              style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>
+              Med över 15 års erfarenhet och en passion för fantasy-motiv med
+              hög detaljrikedom,
+              <br />
+              skapar vi tatueringar som berättar din unika historia.
+            </HeroSubtitle>
+          </HeroContent>
+        </Hero>
 
-      <Section>
-        <StudioGrid>
-          <div>
-            <CarouselWrapper>
-              {studioImages.map((img, i) => (
-                <CarouselImage
-                  key={i}
-                  src={img}
-                  alt={`Studio ${i + 1}`}
-                  active={i === studioIndex}
-                />
-              ))}
-            </CarouselWrapper>
-            <StudioCTA as={Link} to='/booking'>
-              Boka nu
-            </StudioCTA>
-          </div>
-          <StudioText>
-            <SectionTitle>Vår studio</SectionTitle>
-            <p>
-              Vår studio i Kungälv är utrustad med modern teknik och ett team av
-              erfarna tatuerare specialiserade på fantasy-motiv.
-            </p>
-            <p>
-              Vi tar fram unika design som representerar dina idéer, drömmar och
-              berättelser, allt med fokus på detaljrikedom och kvalitet som
-              håller.
-            </p>
-            <p>
-              <b>Öppettider:</b>
-              <br />
-              Måndag - Fredag: 09:00 - 18:00
-            </p>
-            <p>
-              <b>Lunchstängt:</b> 12:00 - 13:00
-            </p>
-            <p>
-              <b>Adress:</b>
-              <br />
-              Storgatan 123
-              <br />
-              442 31 Kungälv
-            </p>
-          </StudioText>
-        </StudioGrid>
-      </Section>
-
-      <Section>
-        <SectionTitle style={{ marginBottom: '2rem', textAlign: 'left' }}>
-          Vårt Team
-        </SectionTitle>
-        <TeamGrid>
-          <TeamCard>
-            <TeamImg src={mantattoo1} alt='Totte Lindström' />
-            <TeamName>Totte Lindström</TeamName>
-            <TeamRole>Grundare & Konstnärlig ledare</TeamRole>
-            <TeamDesc>
-              15+ års erfarenhet av tatueringskonst och passion för
-              fantasy-motiv. Specialiserad på detaljrika drakar och magiska
-              väsen.
-            </TeamDesc>
-          </TeamCard>
-          <TeamCard>
-            <TeamImg src={mantattoo2} alt='Anders Lindström' />
-            <TeamName>Anders Lindström</TeamName>
-            <TeamRole>Senior tatuerare</TeamRole>
-            <TeamDesc>
-              Expert på realistiska porträtt med fantasyinslag. Perfektion i
-              detaljer och kreativa motiv.
-            </TeamDesc>
-          </TeamCard>
-          <TeamCard>
-            <TeamImg src={mantattoo3} alt='Erik Sandberg' />
-            <TeamName>Erik Sandberg</TeamName>
-            <TeamRole>Tatuerare & Designer</TeamRole>
-            <TeamDesc>
-              Specialist på neo-traditionella design med fokus på mytologiska
-              figurer och färgstarka motiv.
-            </TeamDesc>
-          </TeamCard>
-          <TeamCard>
-            <TeamImg src={mantattoo4} alt='Marcus Diaz' />
-            <TeamName>Marcus Diaz</TeamName>
-            <TeamRole>Tribal & Biomekanisk Expert</TeamRole>
-            <TeamDesc>
-              Mästare på tribal och biomekaniska tatueringar med fantasy-inslag
-              och detaljerade mönster.
-            </TeamDesc>
-          </TeamCard>
-          <TeamCard>
-            <TeamImg src={womantatto} alt='amanda Berg' />
-            <TeamName>Amanda Berg</TeamName>
-            <TeamRole>Akvarell & Abstrakt Expert</TeamRole>
-            <TeamDesc>
-              Unik stil med flytande former och mjuka färgövergångar. Fantasy
-              och akvarell i kombination.
-            </TeamDesc>
-          </TeamCard>
-          <CTACard>
-            <div style={{ width: '100%', textAlign: 'center' }}>
-              <p
-                style={{
-                  fontSize: '1.1rem',
-                  margin: '0 0 1rem 0',
-                  color: '#fff',
-                }}>
-                Redo att förverkliga din vision?
-              </p>
-              <p
-                style={{
-                  fontSize: '1rem',
-                  margin: '0 0 1.5rem 0',
-                  color: '#fff',
-                }}>
-                Boka en konsultation med en av våra erfarna tatuerare idag
-              </p>
-              <HeroButton as={Link} to='/booking'>
-                Boka tid nu
-              </HeroButton>
+        <Section>
+          <StudioGrid>
+            <div>
+              <CarouselWrapper>
+                {studioImages.map((img, i) => (
+                  <CarouselImage
+                    key={i}
+                    src={img}
+                    alt={`Studio ${i + 1}`}
+                    active={i === studioIndex}
+                  />
+                ))}
+              </CarouselWrapper>
             </div>
-          </CTACard>
-        </TeamGrid>
-      </Section>
+            <StudioText>
+              <SectionTitle>Vår studio</SectionTitle>
+              <p>
+                Vår studio i Kungälv är utrustad med modern teknik och ett team
+                av erfarna tatuerare specialiserade på fantasy-motiv.
+              </p>
+              <p>
+                Vi tar fram unika design som representerar dina idéer, drömmar
+                och berättelser, allt med fokus på detaljrikedom och kvalitet
+                som håller.
+              </p>
+              <p style={{ marginTop: '1.5rem' }}>
+                <b>Öppettider:</b>
+                <br />
+                Måndag - Fredag: 09:00 - 18:00
+              </p>
+              <p>
+                <b>Lunchstängt:</b> 12:00 - 13:00
+              </p>
+              <p>
+                <b>Adress:</b>
+                <br />
+                Storgatan 123
+                <br />
+                442 31 Kungälv
+              </p>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  width: '100%',
+                }}>
+                <StudioCTA as={Link} to='/booking'>
+                  Boka nu
+                </StudioCTA>
+              </div>
+            </StudioText>
+          </StudioGrid>
+        </Section>
 
-      <Footer>
-        <b>Tottes Tattoo</b> &copy; 2024. Alla rättigheter förbehållna.
-        <br />
-        Din väg till unika fantasy-tatueringar.
-        <SocialIcons>
-          <SocialIcon
-            href='#'
-            aria-label='Instagram'
-            target='_blank'
-            rel='noopener noreferrer'>
-            <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <rect x='2' y='2' width='20' height='20' rx='5' ry='5' />
-              <path d='M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z' />
-              <line x1='17.5' y1='6.5' x2='17.5' y2='6.5' />
-            </svg>
-          </SocialIcon>
-          <SocialIcon
-            href='#'
-            aria-label='Facebook'
-            target='_blank'
-            rel='noopener noreferrer'>
-            <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <path d='M18 2h-3a4 4 0 0 0-4 4v3H7v4h4v8h4v-8h3l1-4h-4V6a1 1 0 0 1 1-1h3z' />
-            </svg>
-          </SocialIcon>
-          <SocialIcon
-            href='#'
-            aria-label='YouTube'
-            target='_blank'
-            rel='noopener noreferrer'>
-            <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <rect x='2' y='7' width='20' height='10' rx='3' ry='3' />
-              <polygon points='10 9 15 12 10 15 10 9' />
-            </svg>
-          </SocialIcon>
-          <SocialIcon
-            href='#'
-            aria-label='X'
-            target='_blank'
-            rel='noopener noreferrer'>
-            <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <path d='M18 6L6 18M6 6l12 12' />
-            </svg>
-          </SocialIcon>
-        </SocialIcons>
-      </Footer>
-    </Wrapper>
+        <Section>
+          <SectionTitle style={{ marginBottom: '2rem', textAlign: 'left' }}>
+            Vårt Team
+          </SectionTitle>
+          <TeamGrid>
+            <TeamCard>
+              <TeamImg src={mantattoo1} alt='Totte Lindström' />
+              <TeamName>Totte Lindström</TeamName>
+              <TeamRole>Grundare & Konstnärlig ledare</TeamRole>
+              <TeamDesc>
+                15+ års erfarenhet av tatueringskonst och passion för
+                fantasy-motiv. Specialiserad på detaljrika drakar och magiska
+                väsen.
+              </TeamDesc>
+            </TeamCard>
+            <TeamCard>
+              <TeamImg src={mantattoo2} alt='Anders Lindström' />
+              <TeamName>Anders Lindström</TeamName>
+              <TeamRole>Senior tatuerare</TeamRole>
+              <TeamDesc>
+                Expert på realistiska porträtt med fantasyinslag. Perfektion i
+                detaljer och kreativa motiv.
+              </TeamDesc>
+            </TeamCard>
+            <TeamCard>
+              <TeamImg src={mantattoo3} alt='Erik Sandberg' />
+              <TeamName>Erik Sandberg</TeamName>
+              <TeamRole>Tatuerare & Designer</TeamRole>
+              <TeamDesc>
+                Specialist på neo-traditionella design med fokus på mytologiska
+                figurer och färgstarka motiv.
+              </TeamDesc>
+            </TeamCard>
+            <TeamCard>
+              <TeamImg src={mantattoo4} alt='Marcus Diaz' />
+              <TeamName>Marcus Diaz</TeamName>
+              <TeamRole>Tribal & Biomekanisk Expert</TeamRole>
+              <TeamDesc>
+                Mästare på tribal och biomekaniska tatueringar med
+                fantasy-inslag och detaljerade mönster.
+              </TeamDesc>
+            </TeamCard>
+            <TeamCard>
+              <TeamImg src={womantatto} alt='amanda Berg' />
+              <TeamName>Amanda Berg</TeamName>
+              <TeamRole>Akvarell & Abstrakt Expert</TeamRole>
+              <TeamDesc>
+                Unik stil med flytande former och mjuka färgövergångar. Fantasy
+                och akvarell i kombination.
+              </TeamDesc>
+            </TeamCard>
+            <CTACard>
+              <div style={{ width: '100%', textAlign: 'center' }}>
+                <p
+                  style={{
+                    fontSize: '1.1rem',
+                    margin: '0 0 1rem 0',
+                    color: '#fff',
+                  }}>
+                  Redo att förverkliga din vision?
+                </p>
+                <p
+                  style={{
+                    fontSize: '1rem',
+                    margin: '0 0 1.5rem 0',
+                    color: '#fff',
+                  }}>
+                  Boka en konsultation med en av våra erfarna tatuerare idag
+                </p>
+                <HeroButton as={Link} to='/booking'>
+                  Boka tid nu
+                </HeroButton>
+              </div>
+            </CTACard>
+          </TeamGrid>
+        </Section>
+
+        <Footer>
+          <b>Tottes Tattoo</b> &copy; 2024. Alla rättigheter förbehållna.
+          <br />
+          Din väg till unika fantasy-tatueringar.
+          <SocialIcons>
+            <SocialIcon
+              href='#'
+              aria-label='Instagram'
+              target='_blank'
+              rel='noopener noreferrer'>
+              <svg
+                width='28'
+                height='28'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <rect x='2' y='2' width='20' height='20' rx='5' ry='5' />
+                <path d='M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z' />
+                <line x1='17.5' y1='6.5' x2='17.5' y2='6.5' />
+              </svg>
+            </SocialIcon>
+            <SocialIcon
+              href='#'
+              aria-label='Facebook'
+              target='_blank'
+              rel='noopener noreferrer'>
+              <svg
+                width='28'
+                height='28'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <path d='M18 2h-3a4 4 0 0 0-4 4v3H7v4h4v8h4v-8h3l1-4h-4V6a1 1 0 0 1 1-1h3z' />
+              </svg>
+            </SocialIcon>
+            <SocialIcon
+              href='#'
+              aria-label='YouTube'
+              target='_blank'
+              rel='noopener noreferrer'>
+              <svg
+                width='28'
+                height='28'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <rect x='2' y='7' width='20' height='10' rx='3' ry='3' />
+                <polygon points='10 9 15 12 10 15 10 9' />
+              </svg>
+            </SocialIcon>
+            <SocialIcon
+              href='#'
+              aria-label='X'
+              target='_blank'
+              rel='noopener noreferrer'>
+              <svg
+                width='28'
+                height='28'
+                viewBox='0 0 24 24'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                strokeLinecap='round'
+                strokeLinejoin='round'>
+                <path d='M18 6L6 18M6 6l12 12' />
+              </svg>
+            </SocialIcon>
+          </SocialIcons>
+        </Footer>
+      </Wrapper>
+    </>
   );
 }
