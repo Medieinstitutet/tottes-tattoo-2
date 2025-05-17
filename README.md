@@ -1,3 +1,9 @@
+# Kör Backend
+
+- Se till du är i backend mapp
+- npm install mutler
+- npm run dev
+
 # tottes-tattoo-2
 
 Backend team:
