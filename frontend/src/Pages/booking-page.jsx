@@ -128,8 +128,7 @@ const BookingPage = () => {
           backgroundImage: `url(${tattooImage})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          minHeight: '100vh',
-          padding: '4rem 2rem',
+          padding: '0 2rem',
           fontFamily: "'Georgia', serif",
           color: '#f1f1f1',
           textShadow: '2px 2px 10px rgba(0, 0, 0, 0.7)',
@@ -140,7 +139,11 @@ const BookingPage = () => {
         }}>
         <form
           onSubmit={handleSubmit}
-          style={{ width: '100%', maxWidth: '500px' }}>
+          style={{
+            width: '100%',
+            maxWidth: '500px',
+            marginTop: '2rem !important',
+          }}>
           <label>
             Välj datum:
             <input

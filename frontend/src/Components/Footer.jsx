@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 
 const FooterWrapper = styled.footer`
-  background: ${({ theme }) => theme.colors.backgroundAccent};
-  color: ${({ theme }) => theme.colors.textSoft};
-  text-align: center;
+  background: #2a1a13;
+  color: #fff;
   padding: 2rem 1rem 1rem 1rem;
+  text-align: center;
   border-top: 2px solid ${({ theme }) => theme.colors.gold};
   margin-top: 0;
   font-family: ${({ theme }) => theme.fonts.main};
