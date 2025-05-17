@@ -23,7 +23,7 @@ const Wrapper = styled.div`
 
 const Hero = styled.section`
   width: 100vw;
-  min-height: 55vh;
+  min-height: 45vh;
   background: linear-gradient(rgba(24, 23, 22, 0.8), rgba(24, 23, 22, 0.8)),
     url(${(props) => props.bg}) center/cover;
   display: flex;
@@ -32,7 +32,7 @@ const Hero = styled.section`
   justify-content: center;
   text-align: center;
   border-bottom: 2px solid ${({ theme }) => theme.colors.gold};
-  padding-top: 6.5rem;
+  padding-top: 1.5rem;
   margin: 0;
 `;
 
@@ -51,7 +51,7 @@ const HeroTitle = styled.h1`
   color: ${({ theme }) => theme.colors.gold};
   font-size: 3rem;
   letter-spacing: 2px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 
   @media (max-width: 768px) {
     font-size: 2rem;
@@ -61,7 +61,7 @@ const HeroTitle = styled.h1`
 const HeroSubtitle = styled.p`
   color: ${({ theme }) => theme.colors.textSoft};
   font-size: 1.3rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
 
   @media (max-width: 768px) {
     font-size: 1.1rem;
