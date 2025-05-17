@@ -18,11 +18,28 @@ const Wrapper = styled.div`
   background-position: center;
 `;
 
+const ADMIN_USERNAME = 'employee'; // Change to your desired username
+const ADMIN_PASSWORD = 'password123'; // Change to your desired password
+
 export default function AdminPage() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [artists, setArtists] = useState([]);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      setLoggedIn(true);
+      setError('');
+    } else {
+      setError('Fel användarnamn eller lösenord');
+    }
+  };
 
   useEffect(() => {
     fetch('http://localhost:3000/api/v1/artists')
@@ -69,6 +86,47 @@ export default function AdminPage() {
       setBookings([]);
     }
   }, [selectedArtist]);
+
+  if (!loggedIn) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+        <Navigation />
+        <div style={{ flex: 1 }}>
+          <form
+            onSubmit={handleLogin}
+            style={{
+              maxWidth: 300,
+              margin: '8rem auto 0 auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}>
+            <h2>Logga in som anställd</h2>
+            <input
+              type='text'
+              placeholder='Användarnamn'
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type='password'
+              placeholder='Lösenord'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button type='submit'>Logga in</button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+          </form>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <>
