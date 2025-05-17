@@ -1,5 +1,5 @@
 import ErrorResponse from '../utilities/errorResponse.mjs';
-import { saveBooking, readBookings, findOccupiedSlots } from '../models/bookingModel.mjs';
+import { saveBooking, readBookings, findOccupiedSlots, deleteBooking, updateBooking } from '../models/bookingModel.mjs';
 import { validateEmail, isValidDate, isValidTimeFormat, isWithinWorkingHours, isNotLunchHour, isWeekday } from '../utilities/validators.mjs';
 
 export const createBooking = async (req, res, next) => {
@@ -149,6 +149,112 @@ export const getAvailableSlots = async (req, res, next) => {
     });
 
     res.json(availableSlots);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteBookingById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    const deletedBooking = await deleteBooking(parseInt(id));
+    
+    if (!deletedBooking) {
+      throw new ErrorResponse('Bokning hittades inte', 404);
+    }
+
+    res.json({
+      success: true,
+      message: 'Bokning borttagen',
+      data: deletedBooking
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateBookingById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    
+    // Validera uppdateringar
+    if (updates.email && !validateEmail(updates.email)) {
+      throw new ErrorResponse('Ogiltig e-postadress', 400);
+    }
+
+    if (updates.date) {
+      if (!isValidDate(updates.date)) {
+        throw new ErrorResponse('Ogiltigt datumformat', 400);
+      }
+      if (!isWeekday(updates.date)) {
+        throw new ErrorResponse('Bokningar är endast tillgängliga måndag till fredag', 400);
+      }
+    }
+
+    if (updates.time) {
+      if (!isValidTimeFormat(updates.time)) {
+        throw new ErrorResponse('Ogiltigt tidsformat', 400);
+      }
+      if (!isWithinWorkingHours(updates.time)) {
+        throw new ErrorResponse('Bokningar måste vara mellan 09:00 och 18:00', 400);
+      }
+      if (!isNotLunchHour(updates.time)) {
+        throw new ErrorResponse('Bokningar är stängda för lunch mellan 12:00 och 13:00', 400);
+      }
+    }
+
+    if (updates.duration) {
+      const durationNum = parseInt(updates.duration, 10);
+      if (isNaN(durationNum) || durationNum < 60 || durationNum > 480) {
+        throw new ErrorResponse('Varaktighet måste vara mellan 60 och 480 minuter', 400);
+      }
+      updates.duration = durationNum;
+    }
+
+    // Om tid eller datum ändras, kontrollera tillgänglighet
+    if (updates.time || updates.date) {
+      const existingBooking = await readBookings().then(bookings => 
+        bookings.find(b => b.id === parseInt(id))
+      );
+
+      if (!existingBooking) {
+        throw new ErrorResponse('Bokning hittades inte', 404);
+      }
+
+      const checkDate = updates.date || existingBooking.date;
+      const checkTime = updates.time || existingBooking.time;
+      const checkDuration = updates.duration || existingBooking.duration;
+
+      const existingBookings = await findOccupiedSlots();
+      const startTime = new Date(`${checkDate}T${checkTime}:00`);
+      const endTime = new Date(startTime.getTime() + checkDuration * 60 * 1000);
+
+      const overlappingBookings = existingBookings.filter(b => {
+        if (b.date !== checkDate || parseInt(b.id) === parseInt(id)) return false;
+        const bStart = new Date(`${b.date}T${b.time}:00`);
+        const bEnd = new Date(bStart.getTime() + b.duration * 60 * 1000);
+        return startTime < bEnd && endTime > bStart;
+      });
+
+      const bookedTattooers = new Set(overlappingBookings.map(b => b.tattooer));
+      if (bookedTattooers.size >= 5) {
+        throw new ErrorResponse('Alla tatuerare är bokade för denna tid', 400);
+      }
+    }
+
+    const updatedBooking = await updateBooking(parseInt(id), updates);
+    
+    if (!updatedBooking) {
+      throw new ErrorResponse('Bokning hittades inte', 404);
+    }
+
+    res.json({
+      success: true,
+      message: 'Bokning uppdaterad',
+      data: updatedBooking
+    });
   } catch (err) {
     next(err);
   }

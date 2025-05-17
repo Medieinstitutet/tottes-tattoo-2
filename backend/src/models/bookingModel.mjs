@@ -33,3 +33,15 @@ export const findOccupiedSlots = async () => {
     tattooer: b.tattooer,
   }));
 };
+
+export const deleteBooking = async (bookingId) => {
+  return await Booking.findOneAndDelete({ id: bookingId });
+};
+
+export const updateBooking = async (bookingId, updatedData) => {
+  return await Booking.findOneAndUpdate(
+    { id: bookingId },
+    updatedData,
+    { new: true, runValidators: true }
+  );
+};
