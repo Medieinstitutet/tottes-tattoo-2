@@ -6,7 +6,7 @@ export default function AdminPage() {
 	const [artists, setArtists] = useState([]);
 
 	useEffect(() => {
-		fetch('http://localhost:3000/api/v1/artists')
+		fetch('http://localhost:5000/api/v1/artists')
 			.then((res) => res.json())
 			.then((data) => setArtists(data));
 	}, []);
