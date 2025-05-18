@@ -6,6 +6,7 @@ import BookingList from '../Components/BookingList';
 import BookingDetail from '../Components/BookingDetail';
 import '../styles/admin-page.css';
 import adminBg from '../assets/admin_bg.jpg';
+import ArtistList from '../Components/admin/ArtistList';
 
 const Wrapper = styled.div`
 	min-height: 80vh;
@@ -26,10 +27,16 @@ export default function AdminPage() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
-	const [artists, setArtists] = useState([]);
 	const [selectedArtist, setSelectedArtist] = useState(null);
 	const [bookings, setBookings] = useState([]);
 	const [selectedBooking, setSelectedBooking] = useState(null);
+	const [artists, setArtists] = useState([
+		{ id: 1, name: 'Totte Lindström' },
+		{ id: 2, name: 'Anders Lindström' },
+		{ id: 3, name: 'Erik Sandberg' },
+		{ id: 4, name: 'Marcus Diaz' },
+		{ id: 5, name: 'Amanda Berg' },
+	]);
 
 	const handleLogin = (e) => {
 		e.preventDefault();
@@ -50,11 +57,7 @@ export default function AdminPage() {
 	useEffect(() => {
 		if (selectedArtist) {
 			// Byt ut mot riktigt API-anrop om det finns, annars mockdata:
-			fetch(
-				`http://localhost:3000/api/v1/bookings?artistId=${
-					selectedArtist._id || selectedArtist.id
-				}`
-			)
+			fetch(`http://localhost:5000/bookings`)
 				.then((res) => res.json())
 				.then((data) => setBookings(data))
 				.catch(() => {
@@ -133,26 +136,29 @@ export default function AdminPage() {
 			<Navigation />
 			<Wrapper>
 				<h2>Tatuerare</h2>
-				<ul>
-					{artists.map((artist) => (
-						<li
-							key={artist._id || artist.id}
-							style={{ cursor: 'pointer', marginBottom: '0.5rem' }}
-							onClick={() => {
-								setSelectedArtist(artist);
-								setSelectedBooking(null);
-							}}>
-							{artist.name} – {artist.specialty}
-						</li>
-					))}
-				</ul>
+				<ArtistList
+					artists={artists}
+					onSelect={(artist) => {
+						setSelectedArtist(artist);
+						setSelectedBooking(null);
+					}}
+				/>
 				{selectedArtist && (
 					<>
-						<h3>Bokningar för {selectedArtist.name}</h3>
-						<BookingList
-							bookings={bookings}
-							onSelect={setSelectedBooking}
-						/>
+						<h3
+							style={{
+								fontSize: '1.5rem',
+								marginTop: '2rem',
+								marginBottom: '1rem',
+							}}>
+							Bokningar för {selectedArtist.name}
+						</h3>
+						<div style={{ marginTop: '2rem' }}>
+							<BookingList
+								bookings={bookings}
+								onSelect={setSelectedBooking}
+							/>
+						</div>
 					</>
 				)}
 				<BookingDetail
