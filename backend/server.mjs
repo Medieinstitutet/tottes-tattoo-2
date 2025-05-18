@@ -1,7 +1,4 @@
-import app from './app.mjs';
+import app from './src/app.mjs';
 
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

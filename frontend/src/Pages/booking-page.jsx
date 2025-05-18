@@ -90,18 +90,18 @@ const BookingPage = () => {
 
     data.append('name', formData.name);
     data.append('email', formData.email);
-    data.append('date', formData.date.toISOString());
+    data.append('date', formData.date.toISOString().split('T')[0]);
     data.append('time', formData.time);
-    data.append('tattooTime', formData.tattooTime);
-    data.append('tattooStyle', formData.tattooStyle);
-    data.append('additionalInfo', formData.additionalInfo);
+    data.append('duration', parseInt(formData.tattooTime) * 60); // Konvertera timmar till minuter
+    data.append('type', formData.tattooStyle.toLowerCase());
+    data.append('tattooer', formData.tattooArtist);
 
     if (referenceImage) {
       data.append('file', referenceImage);
     }
 
     try {
-      const response = await fetch('http://localhost:5000/bookings', {
+      const response = await fetch('http://localhost:3000/api/v1/bookings', {
         method: 'POST',
         body: data,
       });
