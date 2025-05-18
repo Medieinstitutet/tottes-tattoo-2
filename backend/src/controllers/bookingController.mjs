@@ -1,4 +1,3 @@
-import Artist from '../models/artist.mjs';
 import ErrorResponse from '../utilities/errorResponse.mjs';
 import { saveBooking, readBookings, findOccupiedSlots, deleteBooking, updateBooking } from '../models/bookingModel.mjs';
 import { validateEmail, isValidDate, isValidTimeFormat, isWithinWorkingHours, isNotLunchHour, isWeekday } from '../utilities/validators.mjs';
