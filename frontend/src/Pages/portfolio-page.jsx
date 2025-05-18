@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/portfolio-page.css';
+//import '../styles/portfolio-page.css';
+import '../styles/portfolio/portfolio-page.css';
+
 
 import Navigation from '../Components/NavBar';
 import Footer from '../Components/Footer';
 
-import DropdownFilter from '../components/DropdownFilter';
-import Lightbox from '../components/Lightbox';
-import PortfolioGrid from '../components/PortfolioGrid';
+import DropdownFilter from '../components/portfolio/DropdownFilter';
+import Lightbox from '../components/portfolio/Lightbox';
+import PortfolioGrid from '../components/portfolio/PortfolioGrid';
 
-import fantasyWarrior from '../assets/portfolio-page-images/Fantasy-Warrior.jpg';
-import dragonTattoo from '../assets/portfolio-page-images/Dragon-Tattoo.jpg';
-import realistisktPorträtt from '../assets/portfolio-page-images/Realistiskt-Porträtt.jpg';
-import fantasyRealism from '../assets/portfolio-page-images/Fantasy-Realism.jpg';
-import mythologicalGoddess from '../assets/portfolio-page-images/Mythological-Goddess.jpg';
-import colorfulPhoenix from '../assets/portfolio-page-images/Colorful-Phoenix.jpg';
-import biomechanicalSkull from '../assets/portfolio-page-images/Biomechanical-Skull.jpg';
-import tribalShoulderDesign from '../assets/portfolio-page-images/Tribal-Shoulder-Design-tattoo.jpg';
-import akvarellEye from '../assets/portfolio-page-images/Akvarell-Eye.jpg';
-import abstractFlow from '../assets/portfolio-page-images/Abstract-Flow.jpg';
-
+// images
+import fantasyWarrior from '../assets/portfolio-page-images/Fantasy-Warrior.webp';
+import dragonTattoo from '../assets/portfolio-page-images/Dragon-Tattoo.webp';
+import realistisktPorträtt from '../assets/portfolio-page-images/Realistiskt-Porträtt.webp';
+import fantasyRealism from '../assets/portfolio-page-images/Fantasy-Realism.webp';
+import mythologicalGoddess from '../assets/portfolio-page-images/Mythological-Goddess.webp';
+import colorfulPhoenix from '../assets/portfolio-page-images/Colorful-Phoenix.webp';
+import biomechanicalSkull from '../assets/portfolio-page-images/Biomechanical-Skull.webp';
+import tribalShoulderDesign from '../assets/portfolio-page-images/Tribal-Shoulder-Design-tattoo.webp';
+import akvarellEye from '../assets/portfolio-page-images/Akvarell-Eye.webp';
+import abstractFlow from '../assets/portfolio-page-images/Abstract-Flow.webp';
+//finished images
 const PortfolioPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -73,7 +76,8 @@ const PortfolioPage = () => {
   useEffect(() => {
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
-    setTimeout(() => setIsLoading(false), 1000);
+    //setTimeout(() => setIsLoading(false), 1000);
+    setIsLoading(false);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
