@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import '../styles/portfolio-page.css';
+//import '../styles/portfolio-page.css';
+import '../../styles/portfolio/PortfolioCard.css';
 
 const PortfolioCard = ({ item, onClick }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -24,6 +25,7 @@ const PortfolioCard = ({ item, onClick }) => {
           <h3 className="portfolio-title">{item.title}</h3>
           <p className="portfolio-description">{item.description}</p>
           <p className="portfolio-artist">Artist: {item.artist}</p>
+
           <div className="portfolio-categories">
             {item.categories.map((cat) => (
               <span key={cat} className="category-tag">
