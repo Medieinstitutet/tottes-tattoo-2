@@ -2,6 +2,142 @@
 
 Starta servern: npm run dev
 
+# Bokningsflöde
+
+För att skapa en bokning, följ dessa steg:
+
+1. Kontrollera tillgängliga tider för ett datum:
+   ```
+   GET /api/v1/bookings/available-slots?date=2025-05-18
+   ```
+   Returnerar array av lediga tider: ["09:00", "10:00", ...]
+
+2. Kontrollera tillgängliga tatuerare för vald tid:
+   ```
+   GET /api/v1/bookings/available-tattooers?date=2025-05-18&time=09:00&duration=60
+   ```
+   Returnerar array av lediga tatuerare: ["Erik", "Totte", ...]
+
+3. Skapa bokningen:
+   ```
+   POST /api/v1/bookings
+   Content-Type: multipart/form-data
+   
+   Body:
+   - name: string (required)
+   - email: string (required)
+   - date: YYYY-MM-DD (required)
+   - time: HH:mm (required)
+   - duration: number (required, minuter)
+   - type: string (required)
+   - file: File (required)
+   - tattooer: string (required)
+   - additionalInfo: string (optional)
+   ```
+
+# Endpoints
+
+## Bokningar (Bookings)
+
+### GET /api/v1/bookings
+- Hämta alla bokningar
+- Response: Array av bokningar
+
+### GET /api/v1/bookings/:id
+- Hämta specifik bokning
+- Response: Enskild bokning
+
+### POST /api/v1/bookings
+- Skapa ny bokning
+- Body: Se bokningsflöde ovan
+- Response: 
+  ```json
+  {
+    "success": true,
+    "message": "Booking saved.",
+    "tattooer": "string"
+  }
+  ```
+
+### GET /api/v1/bookings/available-slots
+- Hämta lediga tider för ett datum
+- Query: date (YYYY-MM-DD)
+- Response: Array av lediga tider
+
+### GET /api/v1/bookings/available-tattooers
+- Hämta tillgängliga tatuerare för en tid
+- Query: 
+  - date (YYYY-MM-DD)
+  - time (HH:mm)
+  - duration (minuter)
+- Response: Array av tillgängliga tatuerare
+
+### DELETE /api/v1/bookings/:id
+- Ta bort en bokning
+- Response:
+  ```json
+  {
+    "success": true,
+    "message": "Bokning borttagen",
+    "data": { bokning }
+  }
+  ```
+
+### PUT /api/v1/bookings/:id
+- Uppdatera en bokning
+- Body: Valfria fält att uppdatera
+- Response:
+  ```json
+  {
+    "success": true,
+    "message": "Bokning uppdaterad",
+    "data": { bokning }
+  }
+  ```
+
+# Validering
+
+- Datum måste vara i formatet YYYY-MM-DD
+- Tid måste vara i formatet HH:mm
+- Bokningar endast tillgängliga måndag-fredag
+- Bokningar mellan 09:00-18:00 (ej 12:00-13:00 lunch)
+- Duration mellan 60-480 minuter
+- Bokning kan inte gå över stängningstid (18:00)
+- Email måste vara giltigt format
+- Bildfil krävs vid bokning
+
+# Exempel på användning (Frontend)
+
+```javascript
+// 1. Kolla lediga tider
+const date = '2025-05-18';
+const availableSlots = await fetch(`/api/v1/bookings/available-slots?date=${date}`);
+const times = await availableSlots.json();
+
+// 2. Kolla lediga tatuerare för vald tid
+const time = '09:00';
+const duration = '60';
+const availableTattooers = await fetch(`/api/v1/bookings/available-tattooers?date=${date}&time=${time}&duration=${duration}`);
+const tattooers = await availableTattooers.json();
+
+// 3. Skapa bokning
+const formData = new FormData();
+formData.append('name', 'Kund Kundsson');
+formData.append('email', 'kund@email.se');
+formData.append('date', date);
+formData.append('time', time);
+formData.append('duration', duration);
+formData.append('type', 'tattoo');
+formData.append('file', imageFile);
+formData.append('tattooer', tattooers[0]);
+formData.append('additionalInfo', 'Extra information');
+
+const response = await fetch('/api/v1/bookings', {
+  method: 'POST',
+  body: formData
+});
+```
+
 # Artists (Tatuerare)
 
 GET http://localhost:3000/api/v1/artists
@@ -35,32 +171,6 @@ PUT http://localhost:3000/api/v1/artists/:id
 DELETE http://localhost:3000/api/v1/artists/:id
 
 - Ta bort tatuerare
-
-# Bookings (Bokningar)
-
-GET http://localhost:3000/api/v1/bookings
-
-- Hämta alla bokningar
-
-POST http://localhost:3000/api/v1/bookings
-
-- Skapa ny bokning
-  Body (JSON):
-  {
-  "customerName": "Anna",
-  "date": "2024-03-20",
-  "time": "14:00",
-  "artistId": "artist_id_here",
-  "type": "tattoo"
-  }
-
-GET http://localhost:3000/api/v1/bookings/:id
-
-- Hämta specifik bokning
-
-GET http://localhost:3000/api/v1/bookings/available?date=2024-03-20
-
-- Hämta lediga tider för ett specifikt datum
 
 # Filuppladdning
 
@@ -181,8 +291,6 @@ fetch('http://localhost:3000/api/v1/bookings', {
   method: 'POST',
   body: formData,
 });
-```
-
 ```
 
 ```

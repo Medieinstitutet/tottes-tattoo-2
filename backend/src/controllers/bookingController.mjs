@@ -1,14 +1,16 @@
+import Artist from '../models/artist.mjs';
 import ErrorResponse from '../utilities/errorResponse.mjs';
 import { saveBooking, readBookings, findOccupiedSlots, deleteBooking, updateBooking } from '../models/bookingModel.mjs';
 import { validateEmail, isValidDate, isValidTimeFormat, isWithinWorkingHours, isNotLunchHour, isWeekday } from '../utilities/validators.mjs';
 
+
 export const createBooking = async (req, res, next) => {
   try {
-    const { name, email, date, time, type, duration } = req.body;
+    const { name, email, date, time, type, duration, additionalInfo, tattooer } = req.body;
     const file = req.file;
 
-    if (!name || !email || !date || !time || !type || !file || !duration) {
-      throw new ErrorResponse('All fields are required.', 400);
+    if (!name || !email || !date || !time || !type || !file || !duration || !tattooer) {
+      throw new ErrorResponse('All fields except additionalInfo are required.', 400);
     }
 
     if (!validateEmail(email)) {
@@ -40,35 +42,30 @@ export const createBooking = async (req, res, next) => {
       throw new ErrorResponse('Duration must be between 60 and 480 minutes.', 400);
     }
 
-    // Kontrollera överlapp och antal bokningar
+    // Kontrollera att bokningen inte går över stängningstiden
+    const bookingStart = new Date(`2000-01-01T${time}`);
+    const bookingEnd = new Date(bookingStart.getTime() + durationNum * 60000);
+    const closingTime = new Date(`2000-01-01T18:00`);
+    
+    if (bookingEnd > closingTime) {
+      throw new ErrorResponse('Booking cannot extend past closing time (18:00).', 400);
+    }
+
+    // Kontrollera om vald tatuerare är tillgänglig
     const existingBookings = await findOccupiedSlots();
     const startTime = new Date(`${date}T${time}:00`);
-    const endTime = new Date(startTime.getTime() + durationNum * 60 * 1000);
+    const endTime = new Date(startTime.getTime() + parseInt(duration) * 60 * 1000);
 
-    // Hitta alla bokningar som överlappar med det önskade tidsintervallet
     const overlappingBookings = existingBookings.filter(b => {
       if (b.date !== date) return false;
       const bStart = new Date(`${date}T${b.time}:00`);
       const bEnd = new Date(bStart.getTime() + b.duration * 60 * 1000);
-      return startTime < bEnd && endTime > bStart;
+      return startTime < bEnd && endTime > bStart && b.tattooer === tattooer;
     });
 
-    // Räkna unika tatuerare som är bokade under intervallet
-    const bookedTattooers = new Set(overlappingBookings.map(b => b.tattooer));
-    if (bookedTattooers.size >= 5) {
-      throw new ErrorResponse('All tattooers are booked for this time slot.', 400);
+    if (overlappingBookings.length > 0) {
+      throw new ErrorResponse('Selected tattooer is not available for this time slot.', 400);
     }
-
-    // Lista över alla tatuerare
-    const tattooers = ['Totte', 'Erik', 'Marcus', 'Anders', 'Amanda'];
-    // Hitta tillgängliga tatuerare (de som inte är bokade)
-    const availableTattooers = tattooers.filter(t => !bookedTattooers.has(t));
-    if (availableTattooers.length === 0) {
-      throw new ErrorResponse('No tattooers available for this time slot.', 400);
-    }
-
-    // Välj en slumpmässig tillgänglig tatuerare
-    const assignedTattooer = availableTattooers[Math.floor(Math.random() * availableTattooers.length)];
 
     const booking = {
       id: Date.now(),
@@ -76,17 +73,18 @@ export const createBooking = async (req, res, next) => {
       email,
       date,
       time,
-      duration: durationNum,
+      duration: parseInt(duration),
       type: type.toLowerCase(),
-      tattooer: assignedTattooer,
+      tattooer,
       filePath: file.path,
+      additionalInfo
     };
 
     await saveBooking(booking);
     res.json({
       success: true,
       message: 'Booking saved.',
-      tattooer: assignedTattooer,
+      tattooer: tattooer,
     });
   } catch (err) {
     next(err);
@@ -178,7 +176,7 @@ export const updateBookingById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const updates = req.body;
-    
+
     // Validera uppdateringar
     if (updates.email && !validateEmail(updates.email)) {
       throw new ErrorResponse('Ogiltig e-postadress', 400);
@@ -255,6 +253,72 @@ export const updateBookingById = async (req, res, next) => {
       message: 'Bokning uppdaterad',
       data: updatedBooking
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getBookingById = async (req, res, next) => {
+  try {
+    const booking = await findBookingById(parseInt(req.params.id));
+    if (!booking) {
+      throw new ErrorResponse('Booking not found', 404);
+    }
+    res.json(booking);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const uploadBookingFile = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const file = req.file;
+
+    if (!file) {
+      throw new ErrorResponse('No file uploaded', 400);
+    }
+
+    const booking = await findBookingById(parseInt(id));
+    if (!booking) {
+      throw new ErrorResponse('Booking not found', 404);
+    }
+
+    const updatedBooking = await updateBooking(parseInt(id), { filePath: file.path });
+    res.json({
+      success: true,
+      message: 'File uploaded successfully',
+      data: updatedBooking
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAvailableTattooers = async (req, res, next) => {
+  try {
+    const { date, time, duration } = req.query;
+    
+    if (!date || !time || !duration) {
+      throw new ErrorResponse('Date, time and duration are required', 400);
+    }
+
+    const existingBookings = await findOccupiedSlots();
+    const startTime = new Date(`${date}T${time}:00`);
+    const endTime = new Date(startTime.getTime() + parseInt(duration) * 60 * 1000);
+
+    const overlappingBookings = existingBookings.filter(b => {
+      if (b.date !== date) return false;
+      const bStart = new Date(`${date}T${b.time}:00`);
+      const bEnd = new Date(bStart.getTime() + b.duration * 60 * 1000);
+      return startTime < bEnd && endTime > bStart;
+    });
+
+    const bookedTattooers = new Set(overlappingBookings.map(b => b.tattooer));
+    const tattooers = ['Totte', 'Erik', 'Marcus', 'Anders', 'Amanda'];
+    const availableTattooers = tattooers.filter(t => !bookedTattooers.has(t));
+
+    res.json(availableTattooers);
   } catch (err) {
     next(err);
   }

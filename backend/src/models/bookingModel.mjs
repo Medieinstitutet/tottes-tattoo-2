@@ -1,4 +1,3 @@
-// src/models/bookingModel.mjs
 import mongoose from 'mongoose';
 
 const bookingSchema = new mongoose.Schema({
@@ -10,7 +9,16 @@ const bookingSchema = new mongoose.Schema({
   duration: { type: Number, required: [true, 'Varaktighet måste anges'] },
   type: { type: String, required: [true, 'Typ måste anges'] },
   tattooer: { type: String, required: [true, 'Tatuerare måste anges'] },
-  filePath: { type: String }
+  filePath: { type: String },
+  additionalInfo: { type: String }
+}, {
+  toJSON: {
+    transform: function(doc, ret) {
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);
