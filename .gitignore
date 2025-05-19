@@ -1,5 +1,5 @@
 node_modules
 .vscode
 .DS_STORE
-
-**/*.envbackend/uploads/
+uploads/
+**/*.env

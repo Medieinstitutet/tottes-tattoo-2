@@ -38,6 +38,27 @@ DELETE http://localhost:3000/api/v1/artists/:id
 
 # Bookings (Bokningar)
 
+A summary of the fields required to create a booking:
+
+| **Field**         | **Type** | **Required** | **Notes**                                          |
+| ----------------- | -------- | ------------ | -------------------------------------------------- |
+| `name`            | `String` | Yes          | Must be provided and trimmed.                      |
+| `dateAndTime`     | `Date`   | Yes          | Must be a valid date.                              |
+| `durationInHours` | `Number` | Yes          | Must be at least 1 hour.                           |
+| `employee`        | `String` | Yes          | Must be provided and trimmed.                      |
+| `purpose`         | `String` | Yes          | Must be either `"tattoo"` or `"consultation"`.     |
+| `email`           | `String` | Yes          | Must be a valid email address.                     |
+| `phoneNumber`     | `String` | Yes          | Must be a valid phone number (e.g., `+123456789`). |
+| `description`     | `String` | No           | Optional, defaults to an empty string.             |
+| `imageUrl`        | `String` | No           | Optional, can store a URL for an image.            |
+
+### Notes:
+
+- All required fields (`name`, `dateAndTime`, `durationInHours`, `employee`, `purpose`, `email`, `phoneNumber`) must be provided when creating a booking.
+- Optional fields (`description`, `imageUrl`) can be omitted. If `description` is omitted, it defaults to an empty string.
+
+### valid API calls for booking
+
 GET http://localhost:3000/api/v1/bookings
 
 - Hämta alla bokningar
@@ -45,35 +66,40 @@ GET http://localhost:3000/api/v1/bookings
 POST http://localhost:3000/api/v1/bookings
 
 - Skapa ny bokning
-  Body (JSON):
-  {
-  "customerName": "Anna",
-  "date": "2024-03-20",
-  "time": "14:00",
-  "artistId": "artist_id_here",
-  "type": "tattoo"
-  }
 
 GET http://localhost:3000/api/v1/bookings/:id
 
 - Hämta specifik bokning
 
-GET http://localhost:3000/api/v1/bookings/available?date=2024-03-20
+PUT http://localhost:3000/api/v1/bookings/:id
 
-- Hämta lediga tider för ett specifikt datum
+- Updatera eller ändra en bokning
+
+DELETE http://localhost:3000/api/v1/bookings/:id
+
+- Raderar en bokning
 
 # Filuppladdning
 
-POST http://localhost:3000/api/v1/bookings/:id/upload
+När man skapar en ny bokning kan man skicka med en fil. Servern sparar filen fysiskt i mappen uploads/. URL för filen finns tillgänglig i fältet imageUrl när man hämtar en bokning.
 
 - Ladda upp designbild för bokning
-  Body (form-data):
+- Body (form-data):
 - file: [välj fil]
 
 # Testa i Postman
 
-- Skapa en ny Collection
+- Starta mongoDB
 - Lägg till en Environment med variabeln baseUrl = http://localhost:3000
+- - Utdaterad
+
+- - ( se till att ni har en settings.env fil i mappen backend/config) Vi gör exakt samma som lärare Michael gjort på upgifterna westcoast-cars API i lektion 6. Fråga David eller Rain om mer info.
+- Starta servern. Stå i mappen backend och skriv
+
+```javascript
+npm run dev
+```
+
 - Skapa requests för varje endpoint
 - För POST/PUT, använd Body > raw > JSON
 - För filuppladdning, använd Body > form-data
@@ -117,36 +143,13 @@ Detta är en guide baserad på vad vi faktiskt har implementerat i backend.
 }
 ```
 
-## Bookings Endpoints
-
-### GET /bookings
-
-- Hämta alla bokningar
-- Response: Array av bokningar från JSON-fil
-
-### POST /bookings
-
-- Skapa ny bokning
-- Body (form-data):
-  - file: [designbild]
-  - customerName: string
-  - date: string
-  - time: string
-  - artistId: string
-  - type: string
-
-### GET /bookings/occupied
-
-- Hämta upptagna tider
-- Response: Array av upptagna tidslotter
-
 ## Filuppladdning
 
 - Endpoint: POST /bookings
 - Använd form-data
 - Filen skickas med nyckeln 'file'
-- Max filstorlek: 5MB
-- Tillåtna format: jpg, png, jpeg
+- Max filstorlek: obegränsad
+- Tillåtna format: validering för vad man skickar in saknas. Men filer förutom jpg, png, jpeg, webp kan orsaka oförutsägbart beteende.
 
 ## Exempel på användning
 
@@ -170,12 +173,15 @@ fetch('http://localhost:3000/api/v1/artists', {
 
 ```javascript
 const formData = new FormData();
-formData.append('file', imageFile);
-formData.append('customerName', 'Anna');
-formData.append('date', '2024-03-20');
-formData.append('time', '14:00');
-formData.append('artistId', 'artist_id_here');
-formData.append('type', 'tattoo');
+formData.append('file', imageFile); // Optional: Image file for the booking
+formData.append('name', 'Anna Andersson'); // Required: Customer's name
+formData.append('dateAndTime', '2025-05-20T14:00:00Z'); // Required: Date and time in ISO format
+formData.append('durationInHours', 2); // Required: Duration in hours (minimum 1)
+formData.append('employee', 'Jane Smith'); // Required: Assigned employee
+formData.append('purpose', 'tattoo'); // Required: Either "tattoo" or "consultation"
+formData.append('email', 'anna.andersson@example.com'); // Required: Valid email address
+formData.append('phoneNumber', '+46701234567'); // Required: Valid phone number
+formData.append('description', 'A detailed dragon tattoo on the left arm'); // Optional: Description of the booking
 
 fetch('http://localhost:3000/api/v1/bookings', {
   method: 'POST',

@@ -8,7 +8,7 @@ import Footer from '../Components/Footer';
 
 const BookingPage = () => {
   const [formData, setFormData] = useState({
-    type: '', // ← tidigare "bookingType"
+    type: '',
     date: new Date(),
     time: '',
     tattooArtist: '',
@@ -90,22 +90,51 @@ const BookingPage = () => {
       return;
     }
 
-    const data = new FormData();
-
-    data.append('type', formData.type); // ← viktig ändring
-    data.append('name', formData.name);
-    data.append('email', formData.email);
-    data.append('date', formData.date.toISOString().split('T')[0]);
-    data.append('time', formData.time);
-    data.append('duration', parseInt(formData.tattooTime) * 60);
-    data.append('artist', formData.tattooArtist);
-
-    if (formData.phone.trim()) {
-      data.append('phone', formData.phone.trim());
+    if (!formData.type) {
+      alert('Vänligen välj bokningstyp.');
+      return;
     }
 
+    if (!formData.tattooArtist) {
+      alert('Vänligen välj en tatuerare.');
+      return;
+    }
+
+    if (!formData.time) {
+      alert('Vänligen välj starttid.');
+      return;
+    }
+
+    const phoneRegex = /^[\d\s()+-]{7,20}$/; // flexibelt telefonformat
+
+    if (formData.phone.trim()) {
+      if (!phoneRegex.test(formData.phone.trim())) {
+        alert(
+          'Vänligen ange ett giltigt telefonnummer, t.ex. 070 123 45 67 eller +46 70 123 45 67'
+        );
+        return;
+      }
+    }
+
+    const data = new FormData();
+
+    if (formData.phone.trim()) {
+      data.append('phoneNumber', formData.phone.trim());
+    }
+    data.append('purpose', formData.type);
+    data.append('employee', formData.tattooArtist);
+    data.append('durationInHours', parseInt(formData.tattooTime));
+
+    const dateAndTimeISO = new Date(
+      formData.date.toISOString().split('T')[0] + 'T' + formData.time + ':00'
+    ).toISOString();
+    data.append('dateAndTime', dateAndTimeISO);
+
+    data.append('name', formData.name);
+    data.append('email', formData.email);
+
     if (formData.additionalInfo.trim()) {
-      data.append('additionalInfo', formData.additionalInfo.trim());
+      data.append('description', formData.additionalInfo.trim());
     }
 
     if (referenceImage) {
@@ -310,7 +339,7 @@ const BookingPage = () => {
               </label>
               <br />
               <label>
-                Telefonnummer (valfritt):
+                Telefonnummer:
                 <input
                   type="tel"
                   name="phone"
