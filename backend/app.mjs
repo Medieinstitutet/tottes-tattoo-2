@@ -6,7 +6,7 @@ import connectDb from './db/db.mjs';
 import { logger } from './middleware/logger.mjs';
 import errorHandler from './middleware/errorHandler.mjs';
 import cors from 'cors';
-dotenv.config({ path: './config/settings.env' });
+dotenv.config({ path: './src/config/config.env' });
 
 connectDb();
 
