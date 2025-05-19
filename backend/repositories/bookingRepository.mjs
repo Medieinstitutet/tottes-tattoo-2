@@ -1,5 +1,4 @@
 import Booking from '../models/Booking.mjs';
-import upload from '../utilities/imageUpload.mjs';
 
 export default class BookingRepository {
   async listAll() {
@@ -23,15 +22,7 @@ export default class BookingRepository {
   async remove(id) {
     return await Booking.deleteOne({ _id: id });
   }
-
-  async getAvailableTimes(date) {
-    bookings = await Booking.find({
-      timeAndDate: { $regex: date },
-    });
-  }
 }
-
-// TODO - Implement the get available times schedule.
 
 // /api/v1/bookings
 //   - GET    /                    - Hämta alla bokningar
@@ -39,5 +30,3 @@ export default class BookingRepository {
 //   - POST   /                    - Skapa ny bokning
 //   - PUT    /:id                 - Uppdatera bokning
 //   - DELETE /:id                 - Ta bort bokning
-
-//   - GET    /available           - Hämta lediga tider

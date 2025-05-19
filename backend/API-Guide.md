@@ -79,7 +79,7 @@ DELETE http://localhost:3000/api/v1/bookings/:id
 
 - Raderar en bokning
 
-# Filuppladdning
+## Filuppladdning
 
 När man skapar en ny bokning kan man skicka med en fil. Servern sparar filen fysiskt i mappen uploads/. URL för filen finns tillgänglig i fältet imageUrl när man hämtar en bokning.
 
@@ -87,13 +87,14 @@ När man skapar en ny bokning kan man skicka med en fil. Servern sparar filen fy
 - Body (form-data):
 - file: [välj fil]
 
+## Visa lediga tider hos en tatuerare på angiven dag.
+
+GET http://localhost:3000/api/v1/:employee/:date
+
 # Testa i Postman
 
 - Starta mongoDB
-- Lägg till en Environment med variabeln baseUrl = http://localhost:3000
-- - Utdaterad
-
-- - ( se till att ni har en settings.env fil i mappen backend/config) Vi gör exakt samma som lärare Michael gjort på upgifterna westcoast-cars API i lektion 6. Fråga David eller Rain om mer info.
+- Skapa en settings.env fil i mappen backend/config. Vi gör exakt samma som lärare Michael gjort på upgifterna westcoast-cars API i lektion 6. Fråga David eller Rain om mer info.
 - Starta servern. Stå i mappen backend och skriv
 
 ```javascript
@@ -187,8 +188,4 @@ fetch('http://localhost:3000/api/v1/bookings', {
   method: 'POST',
   body: formData,
 });
-```
-
-```
-
 ```
