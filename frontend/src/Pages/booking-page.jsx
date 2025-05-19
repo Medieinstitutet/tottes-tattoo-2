@@ -8,13 +8,14 @@ import Footer from '../Components/Footer';
 
 const BookingPage = () => {
   const [formData, setFormData] = useState({
+    type: '', // ← tidigare "bookingType"
     date: new Date(),
     time: '',
     tattooArtist: '',
     tattooTime: '',
     name: '',
     email: '',
-    tattooStyle: '',
+    phone: '',
     additionalInfo: '',
   });
 
@@ -68,19 +69,7 @@ const BookingPage = () => {
   };
 
   const checkTimeAvailability = (date, time) => {
-    if (time) {
-      setIsTimeAvailable(true);
-    } else {
-      setIsTimeAvailable(false);
-    }
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setReferenceImage(file);
-      console.log('Bifogad bild:', file);
-    }
+    setIsTimeAvailable(Boolean(time));
   };
 
   const isValidEmail = (email) => {
@@ -96,18 +85,36 @@ const BookingPage = () => {
       return;
     }
 
+    if (!formData.tattooTime) {
+      alert('Välj hur lång tid du vill boka.');
+      return;
+    }
+
     const data = new FormData();
 
+    data.append('type', formData.type); // ← viktig ändring
     data.append('name', formData.name);
     data.append('email', formData.email);
     data.append('date', formData.date.toISOString().split('T')[0]);
     data.append('time', formData.time);
     data.append('duration', parseInt(formData.tattooTime) * 60);
-    data.append('type', formData.tattooStyle.toLowerCase());
     data.append('artist', formData.tattooArtist);
+
+    if (formData.phone.trim()) {
+      data.append('phone', formData.phone.trim());
+    }
+
+    if (formData.additionalInfo.trim()) {
+      data.append('additionalInfo', formData.additionalInfo.trim());
+    }
 
     if (referenceImage) {
       data.append('file', referenceImage);
+    }
+
+    console.log('🟡 DATA SOM SKICKAS TILL BACKEND:');
+    for (let [key, value] of data.entries()) {
+      console.log(`${key}: ${value}`);
     }
 
     try {
@@ -118,14 +125,15 @@ const BookingPage = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Bokningen lyckades:', result);
+        console.log('✅ Bokningen lyckades:', result);
         alert('Tack! Din bokning har skickats.');
       } else {
-        console.error('Fel vid bokning:', response.statusText);
-        alert('Något gick fel. Försök igen.');
+        const err = await response.json();
+        console.error('❌ Fel vid bokning:', err);
+        alert('Fel: ' + err.message);
       }
     } catch (err) {
-      console.error('Fetch-fel:', err);
+      console.error('🔥 Fetch-fel:', err);
       alert('Kunde inte skicka bokningen.');
     }
   };
@@ -149,11 +157,32 @@ const BookingPage = () => {
         }}>
         <form
           onSubmit={handleSubmit}
+          encType="multipart/form-data"
           style={{
             width: '100%',
             maxWidth: '500px',
             marginTop: '2rem !important',
           }}>
+          <label>
+            Jag vill boka:
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+              style={{
+                width: '100%',
+                padding: '0.5rem',
+                marginTop: '0.3rem',
+              }}>
+              <option value="">-- Välj ett alternativ --</option>
+              <option value="tattoo">Tatuering</option>
+              <option value="consultation">Konsultation</option>
+            </select>
+          </label>
+
+          <br />
+
           <label>
             Välj datum:
             <input
@@ -281,41 +310,36 @@ const BookingPage = () => {
               </label>
               <br />
               <label>
-                Tatueringsstil:
-                <select
-                  name="tattooStyle"
-                  value={formData.tattooStyle}
+                Telefonnummer (valfritt):
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
                   onChange={handleChange}
-                  required
                   style={{
                     width: '100%',
                     padding: '0.5rem',
                     marginTop: '0.3rem',
-                  }}>
-                  <option value="">Välj en stil</option>
-                  <option value="Old School">Old School (Traditional)</option>
-                  <option value="New School">New School</option>
-                  <option value="Realism">Realism</option>
-                  <option value="Black & Grey">Black & Grey</option>
-                  <option value="Dotwork">Dotwork</option>
-                  <option value="Linework">Linework</option>
-                  <option value="Watercolor">Watercolor</option>
-                  <option value="Geometric">Geometrisk</option>
-                  <option value="Tribal">Tribal</option>
-                  <option value="Japanese">Japansk (Irezumi)</option>
-                  <option value="Chicano">Chicano</option>
-                  <option value="Neo Traditional">Neo Traditional</option>
-                  <option value="Minimalistisk">Minimalistisk</option>
-                  <option value="Sketch">Sketch/Illustrativ</option>
-                  <option value="Trash Polka">Trash Polka</option>
-                  <option value="Fineline">Fineline</option>
-                  <option value="Surrealism">Surrealism</option>
-                  <option value="Biomekanisk">Biomekanisk</option>
-                  <option value="Celtic">Keltisk</option>
-                  <option value="Ignorant Style">Ignorant Style</option>
-                </select>
+                  }}
+                />
               </label>
-
+              <br />
+              <label>
+                Bifoga referensbild (valfritt):
+                <input
+                  type="file"
+                  name="referenceImage"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      setReferenceImage(file);
+                      console.log('Bifogad bild:', file);
+                    }
+                  }}
+                  style={{ marginTop: '0.3rem' }}
+                />
+              </label>
               <br />
               <label>
                 Övrig information:
@@ -330,18 +354,6 @@ const BookingPage = () => {
                   }}
                 />
               </label>
-              <br />
-
-              <label>
-                Bifoga referensbild (valfritt):
-                <input
-                  type="file"
-                  name="referenceImage"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ marginTop: '0.3rem' }}
-                />
-              </label>
             </>
           )}
 
@@ -349,8 +361,8 @@ const BookingPage = () => {
             type="submit"
             disabled={!isTimeAvailable}
             style={{
-              backgroundColor: '#d4af37', // matchar gold i temat
-              color: '#181716', // matchar background i temat
+              backgroundColor: '#d4af37',
+              color: '#181716',
               border: 'none',
               padding: '1rem 2.5rem',
               fontWeight: 'bold',
