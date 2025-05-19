@@ -1,34 +1,54 @@
 import React from 'react';
 
 export default function BookingDetail({ booking, onClose }) {
-	if (!booking) return null;
-	return (
-		<div
-			style={{
-				border: '1px solid #d4af37',
-				padding: '1rem',
-				marginTop: '1rem',
-			}}>
-			<h4>Bokningsdetaljer</h4>
-			<p>Typ: {booking.type}</p>
-			<p>Kund: {booking.name}</p>
-			<p>
-				Tid: {booking.date} {booking.time}
-			</p>
-			<p>Tatuerare: {booking.tattooer}</p>
-			<p>E-post: {booking.email}</p>
-			{booking.filePath && (
-				<p>
-					Bifogad fil:{' '}
-					<a
-						href={booking.filePath}
-						target='_blank'
-						rel='noopener noreferrer'>
-						Visa fil
-					</a>
-				</p>
-			)}
-			<button onClick={onClose}>Stäng</button>
-		</div>
-	);
+  if (!booking) return null;
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: '10%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: '#222',
+        color: '#fff',
+        borderRadius: '16px',
+        boxShadow: '0 4px 32px rgba(0,0,0,0.4)',
+        padding: '2rem',
+        zIndex: 1000,
+        minWidth: '350px',
+        maxWidth: '90vw',
+      }}>
+      {/* Tillbaka-knapp */}
+      <button
+        style={{
+          width: '100%',
+          background: '#d4af37',
+          color: '#222',
+          fontWeight: 'bold',
+          fontSize: '1rem',
+          border: 'none',
+          borderRadius: '8px',
+          padding: '0.6rem',
+          marginBottom: '1.2rem',
+          cursor: 'pointer',
+        }}
+        onClick={onClose}>
+        Tillbaka
+      </button>
+
+      {/* Bokningsdetaljer */}
+      <div style={{ textAlign: 'left' }}>
+        <b>Bokningsdetaljer</b>
+        <div>Typ: {booking.type}</div>
+        <div>Datum: {booking.date}</div>
+        <div>Tid: {booking.time}</div>
+        <div>Kund: {booking.customer || booking.name}</div>
+        <div>Önskemål: {booking.request}</div>
+        <div>Varaktighet: {booking.duration}</div>
+        <div>Tatuerare: {booking.artist || '-'}</div>
+        <div>E-post: {booking.email || '-'}</div>
+      </div>
+    </div>
+  );
 }
