@@ -31,6 +31,18 @@ const bookingSchema = new mongoose.Schema({
       'Purpose of the booking is required and must be either tattoo or consultation.',
     ],
   },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address'],
+  },
+  phoneNumber: {
+    type: String,
+    required: [true, 'Phone number is required'],
+    trim: true,
+    match: [/^\+?[0-9]\d{1,14}$/, 'Please provide a valid phone number'],
+  },
   description: {
     type: String,
     trim: true,
