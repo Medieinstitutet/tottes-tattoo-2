@@ -21,7 +21,7 @@ export default class BookingRepository {
   }
 
   async remove(id) {
-    return await Booking.deleteOne({ id: id });
+    return await Booking.deleteOne({ _id: id });
   }
 
   async getAvailableTimes(date) {
