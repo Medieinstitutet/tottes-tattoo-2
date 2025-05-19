@@ -1,7 +1,7 @@
 # Kör Backend
 
 - Se till du är i backend mapp
-- npm install mutler
+- npm install multer
 - npm run dev
 
 # tottes-tattoo-2
