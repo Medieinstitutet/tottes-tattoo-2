@@ -51,13 +51,25 @@ export default function AdminPage() {
   useEffect(() => {
     fetch('http://localhost:3000/api/v1/artists')
       .then((res) => res.json())
-      .then((data) => setArtists(data));
+      .then((data) => {
+        if (data.length === 0) {
+          setArtists([
+            { id: 1, name: 'Totte Lindström' },
+            { id: 2, name: 'Anders Lindström' },
+            { id: 3, name: 'Erik Sandberg' },
+            { id: 4, name: 'Marcus Diaz' },
+            { id: 5, name: 'Amanda Berg' },
+          ]);
+        } else {
+          setArtists(data);
+        }
+      });
   }, []);
 
   useEffect(() => {
     if (selectedArtist) {
       // Byt ut mot riktigt API-anrop om det finns, annars mockdata:
-      fetch(`http://localhost:5000/bookings`)
+      fetch(`http://localhost:3000/api/v1/bookings`)
         .then((res) => res.json())
         .then((data) => setBookings(data))
         .catch(() => {
