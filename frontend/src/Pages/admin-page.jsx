@@ -85,12 +85,22 @@ export default function AdminPage() {
 					if (!res.ok) throw new Error('API error');
 					return res.json();
 				})
-				.then((data) => {
-					console.log('Bokningar från API:', data);
-					setBookings(data);
+				.then((result) => {
+					console.log('Bokningar från API:', result);
+					const bookingsArray = Array.isArray(result.data) ? result.data : [];
+					const mappedBookings = bookingsArray.map((b) => ({
+						id: b._id,
+						customer: b.name,
+						date: b.dateAndTime ? b.dateAndTime.split('T')[0] : '',
+						time: b.dateAndTime ? b.dateAndTime.split('T')[1]?.slice(0, 5) : '',
+						type: b.purpose,
+						employee: b.employee,
+						email: b.email,
+						description: b.description,
+					}));
+					setBookings(mappedBookings);
 				})
 				.catch(() => {
-					console.log('Visar fejkdata!');
 					setBookings([
 						{
 							id: '1',
