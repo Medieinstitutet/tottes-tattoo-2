@@ -8,18 +8,30 @@ import PortfolioPage from './pages/portfolio-page.jsx';
 import AdminPage from './pages/admin-page.jsx';
 
 const App = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<StartPage />} />
-          <Route path="/booking" element={<BookingPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  );
+	return (
+		<ThemeProvider theme={theme}>
+			<Router>
+				<Routes>
+					<Route
+						path='/'
+						element={<StartPage />}
+					/>
+					<Route
+						path='/booking'
+						element={<BookingPage />}
+					/>
+					<Route
+						path='/portfolio'
+						element={<PortfolioPage />}
+					/>
+					<Route
+						path='/admin'
+						element={<AdminPage />}
+					/>
+				</Routes>
+			</Router>
+		</ThemeProvider>
+	);
 };
 
 export default App;
