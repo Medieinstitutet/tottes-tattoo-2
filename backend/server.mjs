@@ -1,4 +1,11 @@
+<<<<<<< HEAD
+import dotenv from 'dotenv';
+dotenv.config();
+
+import app from './app.mjs';
+=======
 import { app } from './app.mjs';
+>>>>>>> booking-page
 
 const PORT = process.env.PORT || 3000;
 
