@@ -1,11 +1,10 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
-import bookingRoutes from './routes/bookingRoutes.mjs';
-import artistRouter from './routes/artistRoutes.mjs';
+import dotenv from 'dotenv';
+import bookingRouter from './routes/booking-routes.mjs';
+import AppError from './models/appError.mjs';
+import connectDb from './db/db.mjs';
+import { logger } from './middleware/logger.mjs';
 import errorHandler from './middleware/errorHandler.mjs';
-import { connectDb } from './db/db.mjs';
 import cors from 'cors';
 dotenv.config({ path: './config/settings.env' });
 
@@ -13,24 +12,24 @@ connectDb();
 
 const app = express();
 
-// Connect to database
-connectDb();
-
-// Security middleware
 app.use(cors());
-
-// Body parsing middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Static files
-app.use('/uploads', express.static('uploads'));
+if (process.env.NODE_ENV === 'development') {
+	app.use(logger);
+}
 
-// API routes
-app.use('/api/v1/bookings', bookingRoutes);
-app.use('/api/v1/artists', artistRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
-// Error handling
+app.all('*', (req, res, next) => {
+	next(
+		new AppError(
+			`Error 404 - Not Found. Expected: http://localhost:${process.env.PORT}/api/v1/bookings Got: ${req.originalUrl}`
+		),
+		404
+	);
+});
+
 app.use(errorHandler);
 
-export default app;
+export { app };
