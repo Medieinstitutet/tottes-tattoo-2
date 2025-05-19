@@ -23,6 +23,12 @@ export default class BookingRepository {
   async remove(id) {
     return await Booking.deleteOne({ id: id });
   }
+
+  async getAvailableTimes(date) {
+    bookings = await Booking.find({
+      timeAndDate: { $regex: date },
+    });
+  }
 }
 
 // TODO - Implement the get available times schedule.
