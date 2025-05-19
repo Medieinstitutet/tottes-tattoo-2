@@ -1,0 +1,117 @@
+*   [33mabd1e64[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32madmin-page[m[33m, [m[1;31morigin/admin-page[m[33m)[m Merge branch 'admin-page' into frontend-main
+[31m|[m[32m\[m  
+[31m|[m * [33m59b0aa4[m Merge remote-tracking branch 'origin/fix-port-config' into admin-page
+[31m|[m *   [33m36e014f[m Merge branch 'admin-page' of https://github.com/Medieinstitutet/tottes-tattoo-2 into admin-page
+[31m|[m [33m|[m[34m\[m  
+[31m|[m [33m|[m *   [33m03aec60[m merge: integrate fix-port-config changes
+[31m|[m [33m|[m [35m|[m[36m\[m  
+[31m|[m [33m|[m * [36m|[m [33m12e9705[m Update README.md
+[31m|[m * [36m|[m [36m|[m   [33ma27868a[m Merge remote-tracking branch 'origin/fix-port-config' into admin-page
+[31m|[m [36m|[m[36m\[m [36m\[m [36m\[m  
+[31m|[m [36m|[m [36m|[m[36m/[m [36m/[m  
+[31m|[m [36m|[m[36m/[m[36m|[m [36m/[m   
+[31m|[m [36m|[m [36m|[m[36m/[m    
+[31m|[m [36m|[m * [33mf2bd105[m[33m ([m[1;31morigin/fix-port-config[m[33m, [m[1;32mfix-port-config[m[33m)[m Fix Port Config
+[31m|[m [36m|[m * [33me86bca2[m Add dotenv dependency and refactor portfolio page imports
+[31m|[m [36m|[m * [33m2af5aee[m Configure environment variables and update server port to 3000
+[31m|[m * [1;32m|[m [33m253280e[m staged changes
+[31m|[m [1;32m|[m[1;32m/[m  
+* [1;32m|[m [33mdca2d42[m Merge pull request #20 from Medieinstitutet/admin-page
+[1;33m|[m[1;32m\[m[1;32m|[m 
+[1;33m|[m * [33m3634893[m bygg admin-sida, artist-list, bokningsvisning + styling
+[1;33m|[m *   [33mfcddcce[m Merge branch 'frontend-main' of https://github.com/Medieinstitutet/tottes-tattoo-2 into admin-page
+[1;33m|[m [1;35m|[m[1;33m\[m  
+[1;33m|[m [1;35m|[m[1;33m/[m  
+[1;33m|[m[1;33m/[m[1;35m|[m   
+* [1;35m|[m   [33m75eeff3[m Merge pull request #22 from Medieinstitutet/zoher-portfolio-page
+[31m|[m[32m\[m [1;35m\[m  
+[31m|[m * [1;35m|[m [33mad5c03e[m[33m ([m[1;31morigin/zoher-portfolio-page[m[33m, [m[1;32mzoher-portfolio-page[m[33m)[m 🔹 Portfolio Page Enhancements 1) Compressed and converted all images to the .webp format to improve loading speed
+* [32m|[m [1;35m|[m [33m21aa11a[m Merge pull request #21 from Medieinstitutet/zoher-portfolio-page
+[33m|[m[32m\[m[32m|[m [1;35m|[m 
+[33m|[m * [1;35m|[m [33mf74dbb3[m test merge
+[33m|[m[33m/[m [1;35m/[m  
+[33m|[m * [33mae29032[m Lägg till multer som beroende
+[33m|[m *   [33m7925e22[m Lös merge-konflikter med frontend-main
+[33m|[m [35m|[m[33m\[m  
+[33m|[m [35m|[m[33m/[m  
+[33m|[m[33m/[m[35m|[m   
+* [35m|[m   [33mcd67712[m Resolved merge conflict in Footer.jsx, keeping styled-components implementation
+[1;31m|[m[1;32m\[m [35m\[m  
+[1;31m|[m * [35m|[m [33mbeaefd6[m Tweak hero section min-height for better gold line spacing
+[1;31m|[m * [35m|[m [33m5892738[m Update start page layout and move CTA button to left under studio info
+* [1;32m|[m [35m|[m [33m81824fb[m fix: Resolve merge conflicts and use global Navigation component
+[1;33m|[m[1;32m\[m[1;32m|[m [35m|[m 
+[1;33m|[m * [35m|[m [33m998b1fd[m Update README and package-lock, add new images
+[1;33m|[m * [35m|[m [33mf96904c[m fix: Använd global navigation på startsidan så att Admin alltid syns i menyn
+[1;33m|[m * [35m|[m [33mf4bba26[m feat: Lägg till aktiv länk-styling i navigationen med guld-färg för aktuell sida
+[1;33m|[m * [35m|[m   [33mbd44062[m Merge branch 'admin-page' into feature/start-page
+[1;33m|[m [1;35m|[m[1;36m\[m [35m\[m  
+[1;33m|[m * [1;36m|[m [35m|[m [33mf96f719[m Fixade mellanrum i 'Vår studio'-sektionen och förbättrade footer på booking-page
+* [1;36m|[m [1;36m|[m [35m|[m   [33me68d86c[m Merge pull request #19 from Medieinstitutet/zoher-portfolio-page
+[31m|[m[32m\[m [1;36m\[m [1;36m\[m [35m\[m  
+[31m|[m * [1;36m|[m [1;36m|[m [35m|[m [33mb2c064f[m Design and write the code for the portfolio page, and split it into components
+[31m|[m[31m/[m [1;36m/[m [1;36m/[m [35m/[m  
+* [1;36m|[m [1;36m|[m [35m|[m [33m36b9f40[m starter for main
+* [1;36m|[m [1;36m|[m [35m|[m [33me437671[m Merged lotiz-booking into booking-page to integrate NavBar and Footer components.
+* [1;36m|[m [1;36m|[m [35m|[m [33m0582844[m[33m ([m[1;31morigin/lotiz-booking[m[33m)[m Add social icons in footer
+* [1;36m|[m [1;36m|[m [35m|[m [33m6908de7[m Alla CTA-knappar på startsidan länkar nu till booking-page med React Router
+[32m|[m [1;36m|[m [1;36m|[m * [33m4657b8f[m latest update
+[32m|[m [1;36m|[m [1;36m|[m[1;36m/[m  
+[32m|[m [1;36m|[m * [33mc49cac5[m adminpanel -matcha rubrikens stil med start sidan
+[32m|[m [1;36m|[m * [33m431c4ae[m Uppdatera package.json efter merge
+[32m|[m [1;36m|[m *   [33mc32d100[m Merge branch 'feature/start-page' into admin-page
+[32m|[m [1;36m|[m [33m|[m[1;36m\[m  
+[32m|[m [1;36m|[m [33m|[m[1;36m/[m  
+[32m|[m [1;36m|[m[1;36m/[m[33m|[m   
+[32m|[m * [33m|[m   [33mb4f2391[m[33m ([m[1;31morigin/feature/start-page[m[33m, [m[1;32mfeature/start-page[m[33m)[m Merge branch 'lotiz-booking' into feature/start-page
+[32m|[m [35m|[m[32m\[m [33m\[m  
+[32m|[m [35m|[m[32m/[m [33m/[m  
+[32m|[m[32m/[m[35m|[m [33m|[m   
+* [35m|[m [33m|[m [33ma54ddac[m Ta bort rubriken 'Boka tid hos Tottes Tattoo' och lägg till gemensam navigation
+[36m|[m * [33m|[m [33m669f4a5[m Spara ändringar innan merge
+[36m|[m[36m/[m [33m/[m  
+* [33m|[m [33m274d135[m Adjusted styling for footer and buttons
+* [33m|[m [33m0f9324c[m Resolve merge conflicts and finalize integration of start-page and booking-page
+* [33m|[m   [33mf3b4cae[m Resolve all merge conflicts between start-page, main, and booking-page branches; integrated routing and ensured both pages work together smoothly
+[1;31m|[m[1;32m\[m [33m\[m  
+[1;31m|[m * [33m|[m [33m1a1e080[m Placera CTA-kortet bredvid Amanda Berg och uppdatera projektfiler
+[1;31m|[m * [33m|[m [33mb4a4c2b[m feat: add style guide and update start page with CTA buttons
+[1;31m|[m * [33m|[m [33m05a8eef[m Uppdatera start-page: flytta 'Vår studio' till höger ovanför texten
+[1;31m|[m * [33m|[m [33mf286ad2[m Add start page with basic structure and styling
+* [1;32m|[m [33m|[m [33md5d5329[m Fix merge conflicts and finalize booking page with image upload integration
+* [1;32m|[m [33m|[m   [33ma2bf2fd[m WIP: Implement booking form with image upload and API integration – CORS issue under investigation
+[1;33m|[m[1;34m\[m [1;32m\[m [33m\[m  
+[1;33m|[m * [1;32m\[m [33m\[m   [33m77118a1[m Merge pull request #11 from Medieinstitutet/completed-backend-branch
+[1;33m|[m [1;35m|[m[1;36m\[m [1;32m\[m [33m\[m  
+[1;33m|[m [1;35m|[m * [1;32m|[m [33m|[m [33ma86719a[m[33m ([m[1;31morigin/completed-backend-branch[m[33m)[m imported my changes from own test project
+[1;33m|[m [1;35m|[m[1;35m/[m [1;32m/[m [33m/[m  
+[1;33m|[m * [1;32m|[m [33m|[m   [33m2b58989[m Merge pull request #5 from Medieinstitutet/david-backend
+[1;33m|[m [31m|[m[32m\[m [1;32m\[m [33m\[m  
+[1;33m|[m [31m|[m * [1;32m\[m [33m\[m   [33m0f51309[m Merge branch 'main' into david-backend
+[1;33m|[m [31m|[m [33m|[m[31m\[m [1;32m\[m [33m\[m  
+[1;33m|[m [31m|[m [33m|[m[31m/[m [1;32m/[m [33m/[m  
+[1;33m|[m [31m|[m[31m/[m[33m|[m [1;32m|[m [33m|[m   
+[1;33m|[m * [33m|[m [1;32m|[m [33m|[m   [33m8af4bcb[m Merge pull request #6 from Medieinstitutet/arwin-backend
+[1;33m|[m [35m|[m[36m\[m [33m\[m [1;32m\[m [33m\[m  
+[1;33m|[m [35m|[m * [33m|[m [1;32m|[m [33m|[m [33m5177775[m[33m ([m[1;31morigin/arwin-backend[m[33m)[m created MVC structure and files for each folder, also added basic server starting code for the server on app.mjs and server.mjs and added .env7config file
+[1;33m|[m [35m|[m[35m/[m [33m/[m [1;32m/[m [33m/[m  
+[1;33m|[m [35m|[m * [1;32m/[m [33m/[m [33mb57db8b[m Implement basic backend server setup
+[1;33m|[m [35m|[m[35m/[m [1;32m/[m [33m/[m  
+* [35m|[m [1;32m|[m [33m|[m [33mbf40510[m Improve booking form: add image upload and update date picker for React 8.3.0
+* [35m|[m [1;32m|[m [33m|[m [33m61c6b77[m Update booking page: Replace tattoo artist with session duration and dynamic start time filtering
+* [35m|[m [1;32m|[m [33m|[m [33m2124f0f[m Added custom styling for BookingPage with background image, form layout, and hover effects
+* [35m|[m [1;32m|[m [33m|[m [33md8005d7[m Refactor project structure, clean up unnecessary files, and set up routing. Successfully implemented the booking page with basic styling and form setup.
+[35m|[m[35m/[m [1;32m/[m [33m/[m  
+* [1;32m/[m [33m/[m [33m43b3c0f[m Added a Styles folder
+[1;32m|[m[1;32m/[m [33m/[m  
+[1;32m|[m * [33m4de9750[m lägg till styled-components och react-datepicker
+[1;32m|[m * [33m6fccc52[m chore: add styled-components an react-datepicker dependencies
+[1;32m|[m[1;32m/[m  
+* [33m60402ea[m Added pages with react
+*   [33md148649[m Merge branch 'main' of github.com:Medieinstitutet/tottes-tattoo-2
+[1;31m|[m[1;32m\[m  
+[1;31m|[m * [33m3bd29bd[m created empty folders and config readme
+* [1;32m|[m [33m2d812d1[m Add basic structure
+[1;32m|[m[1;32m/[m  
+* [33md7e7318[m readme plus gitignore file
+* [33m86af4aa[m Initial commit

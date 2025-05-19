@@ -7,6 +7,9 @@ import artistRouter from './routes/artistRoutes.mjs';
 import errorHandler from './middleware/errorHandler.mjs';
 import { connectDb } from './db/db.mjs';
 import cors from 'cors';
+dotenv.config({ path: './config/settings.env' });
+
+connectDb();
 
 const app = express();
 
