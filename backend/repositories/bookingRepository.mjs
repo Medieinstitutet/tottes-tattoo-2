@@ -1,5 +1,4 @@
 import Booking from '../models/Booking.mjs';
-import upload from '../utilities/imageUpload.mjs';
 
 export default class BookingRepository {
   async listAll() {
@@ -25,13 +24,9 @@ export default class BookingRepository {
   }
 }
 
-// TODO - Implement the get available times schedule.
-
 // /api/v1/bookings
 //   - GET    /                    - Hämta alla bokningar
 //   - GET    /:id                 - Hämta specifik bokning
 //   - POST   /                    - Skapa ny bokning
 //   - PUT    /:id                 - Uppdatera bokning
 //   - DELETE /:id                 - Ta bort bokning
-
-//   - GET    /available           - Hämta lediga tider
