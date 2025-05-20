@@ -15,7 +15,10 @@ export default function BookingDetail({ booking, onClose }) {
 			<p>
 				Tid: {booking.date} {booking.time}
 			</p>
-			<p>Tatuerare: {booking.tattooer}</p>
+			{/* <p>Tatuerare: {booking.tattooer}</p>     zoher edite*/} 
+
+			<p>Tatuerare: {booking.employee}</p>
+
 			<p>E-post: {booking.email}</p>
 			{booking.filePath && (
 				<p>

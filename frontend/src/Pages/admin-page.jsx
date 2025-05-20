@@ -65,42 +65,95 @@ export default function AdminPage() {
         }
       });
   }, []);
+ useEffect(() => {
+  if (selectedArtist) {
+    fetch('http://localhost:3000/api/v1/bookings')
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredBookings = data.data?.filter(
+          (booking) =>
+            booking.employee &&
+            selectedArtist &&
+            booking.employee.toLowerCase().includes(
+              selectedArtist.name.toLowerCase().split(' ')[0]
+            )
+        );
+        setBookings(filteredBookings || []);
+      })
+      .catch((err) => {
+        console.error('❌ Error fetching bookings:', err);
+        setBookings([]);
+      });
+  } else {
+    setBookings([]);
+  }
+}, [selectedArtist]);
 
-  useEffect(() => {
-    if (selectedArtist) {
-      // Byt ut mot riktigt API-anrop om det finns, annars mockdata:
-      fetch(`http://localhost:3000/api/v1/bookings`)
-        .then((res) => res.json())
-        .then((data) => setBookings(data))
-        .catch(() => {
-          // Mockdata om API inte finns
-          setBookings([
-            {
-              id: '1',
-              date: '2024-05-20',
-              time: '10:00',
-              type: 'Konsultation',
-              customer: 'Lisa',
-              duration: '1 timme',
-              request: 'Drake på armen',
-              file: '',
-            },
-            {
-              id: '2',
-              date: '2024-05-20',
-              time: '13:00',
-              type: 'Tatuering',
-              customer: 'Lisa',
-              duration: '2 timmar',
-              request: 'Drake på armen',
-              file: '',
-            },
-          ]);
-        });
-    } else {
-      setBookings([]);
-    }
-  }, [selectedArtist]);
+/////   zoher
+                                    ///  useEffect(() => {
+                                    ///    if (selectedArtist) {
+                                    ///      // Byt ut mot riktigt API-anrop om det finns, annars mockdata:
+                                    ///      fetch(`http://localhost:3000/api/v1/bookings`)
+                                    ///        .then((res) => res.json())
+                                    ///        //.then((data) => setBookings(data))      zoher
+                                    ///.then((data) => {
+                                    ///        const filteredBookings = data.data?.filter(
+                                    ///          (booking) => booking.employee === selectedArtist.name
+                                    ///        );
+                                    ///        setBookings(filteredBookings || []);
+                                    ///      })
+                                    ///      .catch((err) => {
+                                    ///        console.error('❌ Error fetching bookings:', err);
+                                    ///        setBookings([]);
+                                    ///      });
+                                    ///  } else {
+                                    ///    setBookings([]);
+                                    ///  }
+                                    ///}, [selectedArtist]);
+                                    ///
+////zoher
+        /// zoher
+                  ///   .then((data) => {
+                  ///     const filtered = data.filter(
+                  ///       (b) =>
+                  ///         selectedArtist &&
+                  ///         b.employee &&
+                  ///         b.employee.toLowerCase().includes(
+                  ///           selectedArtist.name.toLowerCase().split(' ')[0]
+                  ///         )
+                  ///     );
+                  ///     setBookings(filtered);
+                  ///   })
+       ///zoher
+        ///.catch(() => {
+        ///  // Mockdata om API inte finns
+        ///  setBookings([
+        ///    {
+        ///      id: '1',
+        ///      date: '2024-05-20',
+        ///      time: '10:00',
+        ///      type: 'Konsultation',
+        ///      customer: 'Lisa',
+        ///      duration: '1 timme',
+        ///      request: 'Drake på armen',
+        ///      file: '',
+        ///    },
+        ///    {
+        ///      id: '2',
+        ///      date: '2024-05-20',
+        ///      time: '13:00',
+        ///      type: 'Tatuering',
+        ///      customer: 'Lisa',
+        ///      duration: '2 timmar',
+        ///      request: 'Drake på armen',
+        ///      file: '',
+        ///    },
+        ///  ]);
+        ///});
+        // } else {
+        //   setBookings([]);
+        // }
+  //}, [selectedArtist]);
 
   if (!loggedIn) {
     return (
