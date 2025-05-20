@@ -306,11 +306,13 @@ export default function AdminPage() {
                 fontWeight: 'bold',
                 border: 'none',
                 borderRadius: '8px',
-                padding: '0.5rem 1rem',
-                margin: '2.5rem auto 0 auto',
+                padding: '0.2rem 0.5rem',
+                fontSize: '0.24rem',
+                minWidth: '52px',
                 cursor: 'pointer',
-                fontSize: '1.1rem',
+                marginBottom: '1.5rem',
                 display: 'block',
+                margin: '1rem auto',
               }}
               onClick={() => setAdminView('menu')}>
               Tillbaka

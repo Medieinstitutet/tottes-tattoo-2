@@ -62,23 +62,23 @@ export default function AvailableTimes({ onBack }) {
           </div>
         ))}
       </div>
-      {/* <button
+      <button
         style={{
           background: '#d4af37',
           color: '#222',
           fontWeight: 'bold',
           border: 'none',
           borderRadius: '8px',
-          padding: '0.5rem 0.3rem',
-          minWidth: '80px',
+          padding: '0.2rem 0.5rem',
+          fontSize: '0.24rem',
+          minWidth: '52px',
           margin: '2.5rem auto 0 auto',
           cursor: 'pointer',
-          fontSize: '1.1rem',
           display: 'block',
         }}
         onClick={onBack}>
         Tillbaka
-      </button> */}
+      </button>
     </>
   );
 }
