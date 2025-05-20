@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/booking-page.css';
@@ -27,9 +27,70 @@ const BookingPage = () => {
   useEffect(() => {
     fetch('http://localhost:3000/api/v1/bookings')
       .then((res) => res.json())
-      .then((data) => setBookings(data))
+      .then((data) => {
+        console.log('📦 Bokningar hämtade:', data.data);
+        setBookings(data.data);
+      })
       .catch((err) => console.error('Kunde inte hämta bokningar:', err));
   }, []);
+
+  const checkTimeAvailability = useCallback(
+    (date, time) => {
+      if (!time || !formData.tattooArtist) {
+        setIsTimeAvailable(false);
+        return;
+      }
+
+      const [hour, minute] = time.split(':');
+      const selectedDateTime = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        parseInt(hour),
+        parseInt(minute)
+      );
+
+      const selectedArtist = formData.tattooArtist.trim().toLowerCase();
+
+      const isBooked = bookings.some((b) => {
+        const booked = new Date(b.dateAndTime);
+        const bookedArtist = b.employee.trim().toLowerCase();
+
+        console.log('❗ Bokad:', booked.toISOString(), booked.getTime());
+        console.log(
+          '❗ Vald:',
+          selectedDateTime.toISOString(),
+          selectedDateTime.getTime()
+        );
+
+        return (
+          booked.getTime() === selectedDateTime.getTime() &&
+          bookedArtist === selectedArtist
+        );
+      });
+
+      console.log('✅ Tillgänglig tid?', !isBooked);
+      setIsTimeAvailable(!isBooked);
+    },
+    [formData.tattooArtist, bookings]
+  );
+
+  useEffect(() => {
+    if (
+      formData.date &&
+      formData.time &&
+      formData.tattooArtist &&
+      bookings.length > 0
+    ) {
+      checkTimeAvailability(formData.date, formData.time);
+    }
+  }, [
+    formData.date,
+    formData.time,
+    formData.tattooArtist,
+    bookings,
+    checkTimeAvailability,
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,16 +111,14 @@ const BookingPage = () => {
       '16:00',
       '17:00',
     ];
-
     if (formData.tattooTime === '2') {
       return allTimes.filter((time) => time !== '11:00' && time !== '17:00');
     }
-
     return allTimes;
   };
 
   const isWeekend = (date) => {
-    const day = date.getDay(); // 0 = söndag, 6 = lördag
+    const day = date.getDay();
     return day === 0 || day === 6;
   };
 
@@ -68,27 +127,15 @@ const BookingPage = () => {
       alert('Helger är inte bokningsbara. Välj en vardag.');
       return;
     }
-
-    setFormData((prev) => ({
-      ...prev,
-      date: date,
-    }));
-
+    setFormData((prev) => ({ ...prev, date }));
     checkTimeAvailability(date, formData.time);
     setShowDatepicker(false);
   };
 
   const handleTimeChange = (e) => {
     const time = e.target.value;
-    setFormData((prev) => ({
-      ...prev,
-      time: time,
-    }));
+    setFormData((prev) => ({ ...prev, time }));
     checkTimeAvailability(formData.date, time);
-  };
-
-  const checkTimeAvailability = (date, time) => {
-    setIsTimeAvailable(Boolean(time));
   };
 
   const isValidEmail = (email) => {
@@ -98,6 +145,17 @@ const BookingPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const validTimes = getAvailableStartTimes();
+    if (!validTimes.includes(formData.time)) {
+      alert('Ogiltig starttid. Välj en tillgänglig tid från listan.');
+      return;
+    }
+
+    if (!isTimeAvailable) {
+      alert('Tiden är upptagen. Välj en annan tid.');
+      return;
+    }
 
     if (!isValidEmail(formData.email)) {
       alert('Vänligen ange en giltig e-postadress (ex: namn@example.com)');
@@ -124,31 +182,32 @@ const BookingPage = () => {
       return;
     }
 
-    const phoneRegex = /^[\d\s()+-]{7,20}$/; // flexibelt telefonformat
-
-    if (formData.phone.trim()) {
-      if (!phoneRegex.test(formData.phone.trim())) {
-        alert(
-          'Vänligen ange ett giltigt telefonnummer, t.ex. 070 123 45 67 eller +46 70 123 45 67'
-        );
-        return;
-      }
+    const phoneRegex = /^[\d\s()+-]{7,20}$/;
+    if (formData.phone.trim() && !phoneRegex.test(formData.phone.trim())) {
+      alert('Vänligen ange ett giltigt telefonnummer.');
+      return;
     }
+
+    // ✅ Tidszonskompenserad tid: Skapa lokal tid och konvertera till korrekt UTC
+    const [hour, minute] = formData.time.split(':');
+    const localDate = new Date(
+      formData.date.getFullYear(),
+      formData.date.getMonth(),
+      formData.date.getDate(),
+      parseInt(hour),
+      parseInt(minute)
+    );
+
+    const utcDate = new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    );
 
     const data = new FormData();
-
-    if (formData.phone.trim()) {
-      data.append('phoneNumber', formData.phone.trim());
-    }
+    data.append('phoneNumber', formData.phone.trim());
     data.append('purpose', formData.type);
     data.append('employee', formData.tattooArtist);
     data.append('durationInHours', parseInt(formData.tattooTime));
-
-    const dateAndTimeISO = new Date(
-      formData.date.toISOString().split('T')[0] + 'T' + formData.time + ':00'
-    ).toISOString();
-    data.append('dateAndTime', dateAndTimeISO);
-
+    data.append('dateAndTime', utcDate.toISOString()); // ✅ Rätt UTC-tid
     data.append('name', formData.name);
     data.append('email', formData.email);
 
@@ -173,15 +232,15 @@ const BookingPage = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Bokningen lyckades:', result);
+        console.log('✅ Bokningen lyckades:', result);
         alert('Tack! Din bokning har skickats.');
       } else {
         const err = await response.json();
-        console.error('Fel vid bokning:', err);
+        console.error('❌ Fel vid bokning:', err);
         alert('Fel: ' + err.message);
       }
     } catch (err) {
-      console.error('Fetch-fel:', err);
+      console.error('🔥 Fetch-fel:', err);
       alert('Kunde inte skicka bokningen.');
     }
   };
@@ -236,7 +295,7 @@ const BookingPage = () => {
             <input
               type="text"
               readOnly
-              value={formData.date.toISOString().split('T')[0]}
+              value={formData.date.toLocaleDateString('sv-SE')}
               onClick={() => setShowDatepicker(!showDatepicker)}
               style={{
                 cursor: 'pointer',
