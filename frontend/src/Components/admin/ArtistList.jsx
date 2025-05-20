@@ -107,7 +107,12 @@ export default function ArtistList({
   // Visa alla artister om ingen är vald
   return (
     <div
-      style={{ display: 'flex', justifyContent: 'center', marginTop: '3rem' }}>
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginTop: '3rem',
+      }}>
       <div
         style={{
           display: 'grid',
