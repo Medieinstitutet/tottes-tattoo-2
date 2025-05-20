@@ -165,6 +165,36 @@ export default function ArtistList({
             </div>
           );
         })}
+        {/* Tillbaka-knapp som kort */}
+        <div
+          style={{
+            border: '2px solid #d4af37',
+            borderRadius: '16px',
+            background: '#181512',
+            color: '#222',
+            padding: '2rem 1.5rem 1.5rem 1.5rem',
+            boxShadow: '0 4px 24px #0006',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: 400,
+          }}>
+          <button
+            style={{
+              background: '#d4af37',
+              color: '#222',
+              fontWeight: 'bold',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '1rem 2.5rem',
+              fontSize: '1.2rem',
+              cursor: 'pointer',
+            }}
+            onClick={() => onSelect(null)}>
+            Tillbaka
+          </button>
+        </div>
       </div>
     </div>
   );

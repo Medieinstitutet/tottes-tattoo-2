@@ -7,6 +7,8 @@ import BookingDetail from '../Components/BookingDetail';
 import '../styles/admin-page.css';
 import adminBg from '../assets/admin_bg.jpg';
 import ArtistList from '../Components/admin/ArtistList';
+import AdminBookings from '../Components/AdminBookings';
+import AvailableTimes from '../Components/AvailableTimes';
 
 const Wrapper = styled.div`
   min-height: 80vh;
@@ -18,6 +20,18 @@ const Wrapper = styled.div`
   background-size: cover;
   background-position: center;
 `;
+
+const buttonStyle = {
+  background: '#d4af37',
+  color: '#222',
+  fontWeight: 'bold',
+  border: 'none',
+  borderRadius: '8px',
+  padding: '1rem 2.5rem',
+  fontSize: '1.2rem',
+  cursor: 'pointer',
+  marginBottom: '1.5rem',
+};
 
 const ADMIN_USERNAME = 'employee'; // Change to your desired username
 const ADMIN_PASSWORD = 'password123'; // Change to your desired password
@@ -37,6 +51,7 @@ export default function AdminPage() {
     { id: 4, name: 'Marcus Diaz' },
     { id: 5, name: 'Amanda Berg' },
   ]);
+  const [adminView, setAdminView] = useState('menu'); // 'menu', 'all', 'available', 'individual'
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -147,21 +162,161 @@ export default function AdminPage() {
     <>
       <Navigation />
       <Wrapper>
-        <h2>Tatuerare</h2>
-        <ArtistList
-          artists={artists}
-          onSelect={(artist) => {
-            setSelectedArtist(artist);
-            setSelectedBooking(null);
-          }}
-          selectedArtist={selectedArtist}
-          bookings={bookings}
-          onBookingSelect={setSelectedBooking}
-        />
-        <BookingDetail
-          booking={selectedBooking}
-          onClose={() => setSelectedBooking(null)}
-        />
+        {adminView === 'menu' && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '2rem',
+              marginTop: '7rem',
+              flexWrap: 'wrap',
+              alignItems: 'flex-start',
+              minHeight: '400px',
+            }}>
+            {/* Kort 1: Alla bokningar */}
+            <div
+              style={{
+                background: '#222',
+                color: '#fff',
+                borderRadius: '16px',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
+                padding: '1.5rem 1.5rem',
+                minWidth: '260px',
+                maxWidth: '320px',
+                minHeight: '340px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: '2px solid #d4af37',
+              }}>
+              <span style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                📋
+              </span>
+              <h3>Alla bokningar</h3>
+              <p style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                Se och hantera alla bokningar i systemet.
+              </p>
+              <button style={buttonStyle} onClick={() => setAdminView('all')}>
+                Gå till bokningar
+              </button>
+            </div>
+
+            {/* Kort 2: Alla lediga tider */}
+            <div
+              style={{
+                background: '#222',
+                color: '#fff',
+                borderRadius: '16px',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
+                padding: '1.5rem 1.5rem',
+                minWidth: '260px',
+                maxWidth: '320px',
+                minHeight: '340px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: '2px solid #d4af37',
+              }}>
+              <span style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                🕒
+              </span>
+              <h3>Alla lediga tider</h3>
+              <p style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                Se översikt över alla lediga tider.
+              </p>
+              <button
+                style={buttonStyle}
+                onClick={() => setAdminView('available')}>
+                Gå till lediga tider
+              </button>
+            </div>
+
+            {/* Kort 3: Individuella bokningar */}
+            <div
+              style={{
+                background: '#222',
+                color: '#fff',
+                borderRadius: '16px',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
+                padding: '1.5rem 1.5rem',
+                minWidth: '260px',
+                maxWidth: '320px',
+                minHeight: '340px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                border: '2px solid #d4af37',
+              }}>
+              <span style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+                👤
+              </span>
+              <h3>Individuella bokningar</h3>
+              <p style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                Se bokningar per tatuerare.
+              </p>
+              <button
+                style={buttonStyle}
+                onClick={() => setAdminView('individual')}>
+                Gå till tatuerare
+              </button>
+            </div>
+          </div>
+        )}
+        {adminView === 'all' && (
+          <>
+            <button style={buttonStyle} onClick={() => setAdminView('menu')}>
+              Tillbaka
+            </button>
+            <AdminBookings onBack={() => setAdminView('menu')} />
+          </>
+        )}
+        {adminView === 'available' && (
+          <>
+            <button style={buttonStyle} onClick={() => setAdminView('menu')}>
+              Tillbaka
+            </button>
+            <h2>Alla lediga tider</h2>
+            <AvailableTimes onBack={() => setAdminView('menu')} />
+          </>
+        )}
+        {adminView === 'individual' && (
+          <>
+            <h2>Tatuerare</h2>
+            <ArtistList
+              artists={artists}
+              onSelect={(artist) => {
+                setSelectedArtist(artist);
+                setSelectedBooking(null);
+              }}
+              selectedArtist={selectedArtist}
+              bookings={bookings}
+              onBookingSelect={setSelectedBooking}
+            />
+            <BookingDetail
+              booking={selectedBooking}
+              onClose={() => setSelectedBooking(null)}
+            />
+            <button
+              style={{
+                background: '#d4af37',
+                color: '#222',
+                fontWeight: 'bold',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '0.5rem 1rem',
+                margin: '2.5rem auto 0 auto',
+                cursor: 'pointer',
+                fontSize: '1.1rem',
+                display: 'block',
+              }}
+              onClick={() => setAdminView('menu')}>
+              Tillbaka
+            </button>
+          </>
+        )}
       </Wrapper>
       <Footer>
         <b>Tottes Tattoo</b> &copy; 2024. Alla rättigheter förbehållna.

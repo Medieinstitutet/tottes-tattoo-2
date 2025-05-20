@@ -19,6 +19,19 @@ export default function BookingDetail({ booking, onClose }) {
         minWidth: '350px',
         maxWidth: '90vw',
       }}>
+      {/* Bild */}
+      <img
+        src={booking.image || '/default-booking.jpg'}
+        alt='Booking'
+        style={{
+          width: '100%',
+          height: '180px',
+          objectFit: 'cover',
+          borderRadius: '12px',
+          marginBottom: '1rem',
+        }}
+      />
+
       {/* Tillbaka-knapp */}
       <button
         style={{
