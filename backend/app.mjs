@@ -8,16 +8,25 @@ import connectDb from './db/db.mjs';
 import { logger } from './middleware/logger.mjs';
 import errorHandler from './middleware/errorHandler.mjs';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Load environment variables from .env file
 dotenv.config();
 
 connectDb();
 
+// För att få dirname i ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 if (process.env.NODE_ENV === 'development') {
   app.use(logger);

@@ -118,7 +118,7 @@ export default function AdminPage() {
             phone: b.phoneNumber || '',
             duration: `${b.durationInHours} timme(ar)`,
             description: b.description,
-            imageUrl: b.imageUrl || '',
+            imageUrl: b.imageUrl ? `http://localhost:3000/${b.imageUrl}` : '',
           }));
 
           setBookings(mappedBookings);
