@@ -6,10 +6,11 @@ import BookingList from '../Components/BookingList';
 import BookingDetail from '../Components/BookingDetail';
 import '../styles/admin-page.css';
 import adminBg from '../assets/admin_bg.jpg';
+import ArtistList from '../components/admin/ArtistList';
 
 const Wrapper = styled.div`
   min-height: 80vh;
-  font-family: ${({ theme }) => theme.fonts.main};
+  font-family: 'Roboto', 'Georgia', Arial, sans-serif;
   color: ${({ theme }) => theme.colors.text};
   background: ${({ theme }) => theme.colors.background};
   padding: 2rem;
@@ -26,10 +27,16 @@ export default function AdminPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [artists, setArtists] = useState([]);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [artists, setArtists] = useState([
+    { id: 1, name: 'Totte Lindström' },
+    { id: 2, name: 'Anders Lindström' },
+    { id: 3, name: 'Erik Sandberg' },
+    { id: 4, name: 'Marcus Diaz' },
+    { id: 5, name: 'Amanda Berg' },
+  ]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -43,22 +50,57 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetch('http://localhost:3000/api/v1/artists')
-      .then((res) => res.json())
-      .then((data) => setArtists(data));
+      .then((res) => {
+        if (!res.ok) throw new Error('API error');
+        return res.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setArtists(data);
+        } else {
+          setArtists([
+            { id: 1, name: 'Totte Lindström' },
+            { id: 2, name: 'Anders Lindström' },
+            { id: 3, name: 'Erik Sandberg' },
+            { id: 4, name: 'Marcus Diaz' },
+            { id: 5, name: 'Amanda Berg' },
+          ]);
+        }
+      })
+      .catch(() => {
+        setArtists([
+          { id: 1, name: 'Totte Lindström' },
+          { id: 2, name: 'Anders Lindström' },
+          { id: 3, name: 'Erik Sandberg' },
+          { id: 4, name: 'Marcus Diaz' },
+          { id: 5, name: 'Amanda Berg' },
+        ]);
+      });
   }, []);
 
   useEffect(() => {
     if (selectedArtist) {
-      // Byt ut mot riktigt API-anrop om det finns, annars mockdata:
-      fetch(
-        `http://localhost:3000/api/v1/bookings?artistId=${
-          selectedArtist._id || selectedArtist.id
-        }`
-      )
-        .then((res) => res.json())
-        .then((data) => setBookings(data))
+      fetch('http://localhost:3000/api/v1/bookings')
+        .then((res) => {
+          if (!res.ok) throw new Error('API error');
+          return res.json();
+        })
+        .then((result) => {
+          console.log('Bokningar från API:', result);
+          const bookingsArray = Array.isArray(result.data) ? result.data : [];
+          const mappedBookings = bookingsArray.map((b) => ({
+            id: b._id,
+            customer: b.name,
+            date: b.dateAndTime ? b.dateAndTime.split('T')[0] : '',
+            time: b.dateAndTime ? b.dateAndTime.split('T')[1]?.slice(0, 5) : '',
+            type: b.purpose,
+            employee: b.employee,
+            email: b.email,
+            description: b.description,
+          }));
+          setBookings(mappedBookings);
+        })
         .catch(() => {
-          // Mockdata om API inte finns
           setBookings([
             {
               id: '1',
@@ -108,18 +150,18 @@ export default function AdminPage() {
             }}>
             <h2>Logga in som anställd</h2>
             <input
-              type='text'
-              placeholder='Användarnamn'
+              type="text"
+              placeholder="Användarnamn"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
             <input
-              type='password'
-              placeholder='Lösenord'
+              type="password"
+              placeholder="Lösenord"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <button type='submit'>Logga in</button>
+            <button type="submit">Logga in</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
           </form>
         </div>
@@ -133,25 +175,16 @@ export default function AdminPage() {
       <Navigation />
       <Wrapper>
         <h2>Tatuerare</h2>
-        <ul>
-          {artists.map((artist) => (
-            <li
-              key={artist._id || artist.id}
-              style={{ cursor: 'pointer', marginBottom: '0.5rem' }}
-              onClick={() => {
-                setSelectedArtist(artist);
-                setSelectedBooking(null);
-              }}>
-              {artist.name} – {artist.specialty}
-            </li>
-          ))}
-        </ul>
-        {selectedArtist && (
-          <>
-            <h3>Bokningar för {selectedArtist.name}</h3>
-            <BookingList bookings={bookings} onSelect={setSelectedBooking} />
-          </>
-        )}
+        <ArtistList
+          artists={artists}
+          onSelect={(artist) => {
+            setSelectedArtist(artist);
+            setSelectedBooking(null);
+          }}
+          selectedArtist={selectedArtist}
+          bookings={bookings}
+          onBookingSelect={setSelectedBooking}
+        />
         <BookingDetail
           booking={selectedBooking}
           onClose={() => setSelectedBooking(null)}
@@ -169,78 +202,78 @@ export default function AdminPage() {
             gap: '1.5rem',
           }}>
           <a
-            href='#'
-            aria-label='Instagram'
-            target='_blank'
-            rel='noopener noreferrer'
+            href="#"
+            aria-label="Instagram"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{ color: '#d4af37', fontSize: '2rem' }}>
             <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <rect x='2' y='2' width='20' height='20' rx='5' ry='5' />
-              <path d='M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z' />
-              <line x1='17.5' y1='6.5' x2='17.5' y2='6.5' />
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.5" y2="6.5" />
             </svg>
           </a>
           <a
-            href='#'
-            aria-label='Facebook'
-            target='_blank'
-            rel='noopener noreferrer'
+            href="#"
+            aria-label="Facebook"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{ color: '#d4af37', fontSize: '2rem' }}>
             <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <path d='M18 2h-3a4 4 0 0 0-4 4v3H7v4h4v8h4v-8h3l1-4h-4V6a1 1 0 0 1 1-1h3z' />
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <path d="M18 2h-3a4 4 0 0 0-4 4v3H7v4h4v8h4v-8h3l1-4h-4V6a1 1 0 0 1 1-1h3z" />
             </svg>
           </a>
           <a
-            href='#'
-            aria-label='YouTube'
-            target='_blank'
-            rel='noopener noreferrer'
+            href="#"
+            aria-label="YouTube"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{ color: '#d4af37', fontSize: '2rem' }}>
             <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <rect x='2' y='7' width='20' height='10' rx='3' ry='3' />
-              <polygon points='10 9 15 12 10 15 10 9' />
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <rect x="2" y="7" width="20" height="10" rx="3" ry="3" />
+              <polygon points="10 9 15 12 10 15 10 9" />
             </svg>
           </a>
           <a
-            href='#'
-            aria-label='X'
-            target='_blank'
-            rel='noopener noreferrer'
+            href="#"
+            aria-label="X"
+            target="_blank"
+            rel="noopener noreferrer"
             style={{ color: '#d4af37', fontSize: '2rem' }}>
             <svg
-              width='28'
-              height='28'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-              strokeWidth='2'
-              strokeLinecap='round'
-              strokeLinejoin='round'>
-              <path d='M18 6L6 18M6 6l12 12' />
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round">
+              <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </a>
         </div>
