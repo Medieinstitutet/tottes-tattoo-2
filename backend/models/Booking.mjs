@@ -39,7 +39,6 @@ const bookingSchema = new mongoose.Schema({
   },
   phoneNumber: {
     type: String,
-    required: [true, 'Phone number is required'],
     trim: true,
     match: [/^\+?[0-9]\d{1,14}$/, 'Please provide a valid phone number'],
   },
