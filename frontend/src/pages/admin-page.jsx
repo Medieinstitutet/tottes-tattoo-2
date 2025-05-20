@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Navigation from '../Components/NavBar';
-import Footer from '../Components/Footer';
+import Navigation from '../components/NavBar';
+import Footer from '../components/Footer';
 import styled from 'styled-components';
 import BookingList from '../Components/BookingList';
 import BookingDetail from '../Components/BookingDetail';

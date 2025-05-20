@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 //import '../styles/portfolio-page.css';
 import '../styles/portfolio/portfolio-page.css';
 
-
-import Navigation from '../Components/NavBar';
-import Footer from '../Components/Footer';
+import Navigation from '../components/NavBar';
+import Footer from '../components/Footer';
 
 import DropdownFilter from '../components/portfolio/DropdownFilter';
 import Lightbox from '../components/portfolio/Lightbox';
@@ -51,25 +50,97 @@ const PortfolioPage = () => {
     'Anders Lindström',
     'Erik Sandberg',
     'Marcus Diaz',
-    'Amanda Berg'
+    'Amanda Berg',
   ];
 
   const portfolioItems = [
-    { id: 1, title: 'Fantasy Warrior', description: 'Fantasymotiv med svärd och magi', imageUrl: fantasyWarrior, categories: ['fantasy', 'magiska'], artist: 'Totte Lindström' },
-    { id: 2, title: 'Dragon Tattoo', description: 'Drake med blå detaljer i fantasy-stil', imageUrl: dragonTattoo, categories: ['fantasy', 'drakar'], artist: 'Totte Lindström' },
-    { id: 3, title: 'Realistiskt Porträtt', description: 'Grayscale realistiskt ansikte', imageUrl: realistisktPorträtt, categories: ['realism', 'porträtt'], artist: 'Anders Lindström' },
-    { id: 4, title: 'Fantasy Realism', description: 'Porträtt med fantasy-touch i realistisk stil', imageUrl: fantasyRealism, categories: ['realism', 'porträtt', 'fantasy'], artist: 'Anders Lindström' },
-    { id: 5, title: 'Mythological Goddess', description: 'Neo-traditionellt färgmotiv med mytologi', imageUrl: mythologicalGoddess, categories: ['neotraditional', 'mytologi', 'färg'], artist: 'Erik Sandberg' },
-    { id: 6, title: 'Colorful Phoenix', description: 'Färgstark fenix i rörelse', imageUrl: colorfulPhoenix, categories: ['färg', 'mytologi'], artist: 'Erik Sandberg' },
-    { id: 7, title: 'Biomechanical Skull', description: 'Biomekaniskt motiv med metallstruktur', imageUrl: biomechanicalSkull, categories: ['färg', 'biomekanisk'], artist: 'Marcus Diaz' },
-    { id: 8, title: 'Tribal Shoulder Design', description: 'Tribal-stil på axel med skuggning', imageUrl: tribalShoulderDesign, categories: ['tribal'], artist: 'Marcus Diaz' },
-    { id: 9, title: 'Akvarell Eye', description: 'Öga målat i akvarellstil', imageUrl: akvarellEye, categories: ['akvarell'], artist: 'Amanda Berg' },
-    { id: 10, title: 'Abstract Flow', description: 'Abstrakta färger och former i flyt', imageUrl: abstractFlow, categories: ['färg', 'abstrakt', 'akvarell'], artist: 'Amanda Berg' }
+    {
+      id: 1,
+      title: 'Fantasy Warrior',
+      description: 'Fantasymotiv med svärd och magi',
+      imageUrl: fantasyWarrior,
+      categories: ['fantasy', 'magiska'],
+      artist: 'Totte Lindström',
+    },
+    {
+      id: 2,
+      title: 'Dragon Tattoo',
+      description: 'Drake med blå detaljer i fantasy-stil',
+      imageUrl: dragonTattoo,
+      categories: ['fantasy', 'drakar'],
+      artist: 'Totte Lindström',
+    },
+    {
+      id: 3,
+      title: 'Realistiskt Porträtt',
+      description: 'Grayscale realistiskt ansikte',
+      imageUrl: realistisktPorträtt,
+      categories: ['realism', 'porträtt'],
+      artist: 'Anders Lindström',
+    },
+    {
+      id: 4,
+      title: 'Fantasy Realism',
+      description: 'Porträtt med fantasy-touch i realistisk stil',
+      imageUrl: fantasyRealism,
+      categories: ['realism', 'porträtt', 'fantasy'],
+      artist: 'Anders Lindström',
+    },
+    {
+      id: 5,
+      title: 'Mythological Goddess',
+      description: 'Neo-traditionellt färgmotiv med mytologi',
+      imageUrl: mythologicalGoddess,
+      categories: ['neotraditional', 'mytologi', 'färg'],
+      artist: 'Erik Sandberg',
+    },
+    {
+      id: 6,
+      title: 'Colorful Phoenix',
+      description: 'Färgstark fenix i rörelse',
+      imageUrl: colorfulPhoenix,
+      categories: ['färg', 'mytologi'],
+      artist: 'Erik Sandberg',
+    },
+    {
+      id: 7,
+      title: 'Biomechanical Skull',
+      description: 'Biomekaniskt motiv med metallstruktur',
+      imageUrl: biomechanicalSkull,
+      categories: ['färg', 'biomekanisk'],
+      artist: 'Marcus Diaz',
+    },
+    {
+      id: 8,
+      title: 'Tribal Shoulder Design',
+      description: 'Tribal-stil på axel med skuggning',
+      imageUrl: tribalShoulderDesign,
+      categories: ['tribal'],
+      artist: 'Marcus Diaz',
+    },
+    {
+      id: 9,
+      title: 'Akvarell Eye',
+      description: 'Öga målat i akvarellstil',
+      imageUrl: akvarellEye,
+      categories: ['akvarell'],
+      artist: 'Amanda Berg',
+    },
+    {
+      id: 10,
+      title: 'Abstract Flow',
+      description: 'Abstrakta färger och former i flyt',
+      imageUrl: abstractFlow,
+      categories: ['färg', 'abstrakt', 'akvarell'],
+      artist: 'Amanda Berg',
+    },
   ];
 
-  const filteredItems = portfolioItems.filter(item => {
-    const categoryMatch = selectedCategory === 'all' || item.categories.includes(selectedCategory);
-    const artistMatch = selectedArtist === 'all' || item.artist === selectedArtist;
+  const filteredItems = portfolioItems.filter((item) => {
+    const categoryMatch =
+      selectedCategory === 'all' || item.categories.includes(selectedCategory);
+    const artistMatch =
+      selectedArtist === 'all' || item.artist === selectedArtist;
     return categoryMatch && artistMatch;
   });
 
@@ -90,12 +161,14 @@ const PortfolioPage = () => {
         <div className="portfolio-background"></div>
         <div className="portfolio-container">
           <h1 className="portfolio-heading">Våra Arbeten</h1>
-          <p className="portfolio-intro">Utforska konstnärernas olika stilar och uttryck.</p>
+          <p className="portfolio-intro">
+            Utforska konstnärernas olika stilar och uttryck.
+          </p>
 
           <div className="dropdown-filters-container">
             <DropdownFilter
               label="Stilar"
-              options={categories.map(c => c.id)}
+              options={categories.map((c) => c.id)}
               selected={selectedCategory}
               onSelect={setSelectedCategory}
             />
@@ -118,7 +191,10 @@ const PortfolioPage = () => {
       <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />
 
       {showScrollTop && (
-        <button className="scroll-top-button" onClick={scrollToTop} aria-label="Scroll to top">
+        <button
+          className="scroll-top-button"
+          onClick={scrollToTop}
+          aria-label="Scroll to top">
           ↑
         </button>
       )}

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/booking-page.css';
 import tattooImage from '../assets/tattoo.jpg';
-import Navigation from '../Components/NavBar';
-import Footer from '../Components/Footer';
+import Navigation from '../components/NavBar';
+import Footer from '../components/Footer';
 
 const BookingPage = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +22,14 @@ const BookingPage = () => {
   const [referenceImage, setReferenceImage] = useState(null);
   const [isTimeAvailable, setIsTimeAvailable] = useState(false);
   const [showDatepicker, setShowDatepicker] = useState(false);
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/v1/bookings')
+      .then((res) => res.json())
+      .then((data) => setBookings(data))
+      .catch((err) => console.error('Kunde inte hämta bokningar:', err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,12 +58,23 @@ const BookingPage = () => {
     return allTimes;
   };
 
+  const isWeekend = (date) => {
+    const day = date.getDay(); // 0 = söndag, 6 = lördag
+    return day === 0 || day === 6;
+  };
+
   const handleDateChange = (date) => {
+    if (isWeekend(date)) {
+      alert('Helger är inte bokningsbara. Välj en vardag.');
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       date: date,
     }));
-    checkTimeAvailability(date);
+
+    checkTimeAvailability(date, formData.time);
     setShowDatepicker(false);
   };
 
@@ -141,7 +160,7 @@ const BookingPage = () => {
       data.append('file', referenceImage);
     }
 
-    console.log('🟡 DATA SOM SKICKAS TILL BACKEND:');
+    console.log('DATA SOM SKICKAS TILL BACKEND:');
     for (let [key, value] of data.entries()) {
       console.log(`${key}: ${value}`);
     }
@@ -154,15 +173,15 @@ const BookingPage = () => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log('✅ Bokningen lyckades:', result);
+        console.log('Bokningen lyckades:', result);
         alert('Tack! Din bokning har skickats.');
       } else {
         const err = await response.json();
-        console.error('❌ Fel vid bokning:', err);
+        console.error('Fel vid bokning:', err);
         alert('Fel: ' + err.message);
       }
     } catch (err) {
-      console.error('🔥 Fetch-fel:', err);
+      console.error('Fetch-fel:', err);
       alert('Kunde inte skicka bokningen.');
     }
   };
