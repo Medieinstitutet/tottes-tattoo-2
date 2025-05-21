@@ -5,6 +5,10 @@ import '../styles/booking-page.css';
 import tattooImage from '../assets/tattoo.jpg';
 import Navigation from '../components/NavBar';
 import Footer from '../components/Footer';
+import SuccessMessage from '../components/booking/SuccessMessage';
+import ErrorMessage from '../components/booking/ErrorMessage';
+import DateSelector from '../components/booking/DateSelector';
+import TimePicker from '../components/booking/TimePicker';
 
 const BookingPage = () => {
   const [formData, setFormData] = useState({
@@ -23,54 +27,107 @@ const BookingPage = () => {
   const [isTimeAvailable, setIsTimeAvailable] = useState(false);
   const [showDatepicker, setShowDatepicker] = useState(false);
   const [bookings, setBookings] = useState([]);
+  const [fullyBookedDates, setFullyBookedDates] = useState([]);
+  const [timeError, setTimeError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  useEffect(() => {
+  const fetchBookings = () => {
     fetch('http://localhost:3000/api/v1/bookings')
       .then((res) => res.json())
-      .then((data) => {
-        console.log('📦 Bokningar hämtade:', data.data);
-        setBookings(data.data);
-      })
-      .catch((err) => console.error('Kunde inte hämta bokningar:', err));
+      .then((data) => setBookings(data.data))
+      .catch((err) => console.error('Kunde inte uppdatera bokningar:', err));
+  };
+
+  useEffect(() => {
+    fetchBookings();
   }, []);
+
+  const toUtcIso = (date, time) => {
+    const [hour, minute] = time.split(':');
+    const local = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      parseInt(hour),
+      parseInt(minute)
+    );
+    return new Date(
+      local.getTime() - local.getTimezoneOffset() * 60000
+    ).toISOString();
+  };
+
+  const getAvailableStartTimes = useCallback(() => {
+    const allTimes = [
+      '09:00',
+      '10:00',
+      '11:00',
+      '13:00',
+      '14:00',
+      '15:00',
+      '16:00',
+      '17:00',
+    ];
+    if (formData.tattooTime === '2') {
+      return allTimes.filter((time) => time !== '11:00' && time !== '17:00');
+    }
+    return allTimes;
+  }, [formData.tattooTime]);
+
+  useEffect(() => {
+    if (!formData.tattooArtist || bookings.length === 0) return;
+
+    const artist = formData.tattooArtist.trim().toLowerCase();
+    const dateMap = {};
+
+    bookings.forEach((b) => {
+      const bookedArtist = b.employee.trim().toLowerCase();
+      if (bookedArtist !== artist) return;
+
+      const bookedDate = new Date(b.dateAndTime);
+      const key = bookedDate.toISOString().split('T')[0];
+
+      if (!dateMap[key]) dateMap[key] = [];
+      dateMap[key].push(bookedDate);
+    });
+
+    const maxBookingsPerDay = getAvailableStartTimes().length;
+    const fullDates = Object.entries(dateMap)
+      .filter(([, times]) => times.length >= maxBookingsPerDay)
+      .map(([date]) => date);
+
+    setFullyBookedDates(fullDates);
+  }, [formData.tattooArtist, bookings, getAvailableStartTimes]);
+
+  const isDayFullyBooked = (date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    return fullyBookedDates.includes(dateStr);
+  };
 
   const checkTimeAvailability = useCallback(
     (date, time) => {
       if (!time || !formData.tattooArtist) {
         setIsTimeAvailable(false);
+        setTimeError('');
         return;
       }
 
-      const [hour, minute] = time.split(':');
-      const selectedDateTime = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        parseInt(hour),
-        parseInt(minute)
-      );
-
-      const selectedArtist = formData.tattooArtist.trim().toLowerCase();
+      const selectedUtc = toUtcIso(date, time);
 
       const isBooked = bookings.some((b) => {
-        const booked = new Date(b.dateAndTime);
         const bookedArtist = b.employee.trim().toLowerCase();
-
-        console.log('❗ Bokad:', booked.toISOString(), booked.getTime());
-        console.log(
-          '❗ Vald:',
-          selectedDateTime.toISOString(),
-          selectedDateTime.getTime()
-        );
-
         return (
-          booked.getTime() === selectedDateTime.getTime() &&
-          bookedArtist === selectedArtist
+          b.dateAndTime === selectedUtc &&
+          bookedArtist === formData.tattooArtist.trim().toLowerCase()
         );
       });
 
-      console.log('✅ Tillgänglig tid?', !isBooked);
-      setIsTimeAvailable(!isBooked);
+      if (isBooked) {
+        setIsTimeAvailable(false);
+        setTimeError('Tiden är redan bokad. Välj en annan.');
+      } else {
+        setIsTimeAvailable(true);
+        setTimeError('');
+      }
     },
     [formData.tattooArtist, bookings]
   );
@@ -94,32 +151,7 @@ const BookingPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const getAvailableStartTimes = () => {
-    const allTimes = [
-      '09:00',
-      '10:00',
-      '11:00',
-      '13:00',
-      '14:00',
-      '15:00',
-      '16:00',
-      '17:00',
-    ];
-    if (formData.tattooTime === '2') {
-      return allTimes.filter((time) => time !== '11:00' && time !== '17:00');
-    }
-    return allTimes;
-  };
-
-  const isWeekend = (date) => {
-    const day = date.getDay();
-    return day === 0 || day === 6;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (date) => {
@@ -143,8 +175,14 @@ const BookingPage = () => {
     return regex.test(email);
   };
 
+  const isWeekend = (date) => {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSuccessMessage('');
 
     const validTimes = getAvailableStartTimes();
     if (!validTimes.includes(formData.time)) {
@@ -152,8 +190,16 @@ const BookingPage = () => {
       return;
     }
 
-    if (!isTimeAvailable) {
-      alert('Tiden är upptagen. Välj en annan tid.');
+    const selectedUtc = toUtcIso(formData.date, formData.time);
+    const selectedArtist = formData.tattooArtist.trim().toLowerCase();
+
+    const alreadyBooked = bookings.some((b) => {
+      const bookedArtist = b.employee.trim().toLowerCase();
+      return b.dateAndTime === selectedUtc && bookedArtist === selectedArtist;
+    });
+
+    if (alreadyBooked) {
+      alert('Tiden är redan bokad. Välj en annan.');
       return;
     }
 
@@ -188,26 +234,12 @@ const BookingPage = () => {
       return;
     }
 
-    // ✅ Tidszonskompenserad tid: Skapa lokal tid och konvertera till korrekt UTC
-    const [hour, minute] = formData.time.split(':');
-    const localDate = new Date(
-      formData.date.getFullYear(),
-      formData.date.getMonth(),
-      formData.date.getDate(),
-      parseInt(hour),
-      parseInt(minute)
-    );
-
-    const utcDate = new Date(
-      localDate.getTime() - localDate.getTimezoneOffset() * 60000
-    );
-
     const data = new FormData();
     data.append('phoneNumber', formData.phone.trim());
     data.append('purpose', formData.type);
     data.append('employee', formData.tattooArtist);
     data.append('durationInHours', parseInt(formData.tattooTime));
-    data.append('dateAndTime', utcDate.toISOString()); // ✅ Rätt UTC-tid
+    data.append('dateAndTime', selectedUtc);
     data.append('name', formData.name);
     data.append('email', formData.email);
 
@@ -219,11 +251,6 @@ const BookingPage = () => {
       data.append('file', referenceImage);
     }
 
-    console.log('DATA SOM SKICKAS TILL BACKEND:');
-    for (let [key, value] of data.entries()) {
-      console.log(`${key}: ${value}`);
-    }
-
     try {
       const response = await fetch('http://localhost:3000/api/v1/bookings', {
         method: 'POST',
@@ -231,16 +258,31 @@ const BookingPage = () => {
       });
 
       if (response.ok) {
-        const result = await response.json();
-        console.log('✅ Bokningen lyckades:', result);
-        alert('Tack! Din bokning har skickats.');
+        setSuccessMessage('Tack! Din bokning har skickats.');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Vänta 5 sekunder innan formuläret töms
+        setTimeout(() => {
+          fetchBookings();
+          setFormData({
+            type: '',
+            date: new Date(),
+            time: '',
+            tattooArtist: '',
+            tattooTime: '',
+            name: '',
+            email: '',
+            phone: '',
+            additionalInfo: '',
+          });
+          setReferenceImage(null);
+          setIsTimeAvailable(false);
+          setTimeError('');
+          setSuccessMessage('');
+        }, 5000);
       } else {
-        const err = await response.json();
-        console.error('❌ Fel vid bokning:', err);
-        alert('Fel: ' + err.message);
+        alert('Fel vid bokning.');
       }
-    } catch (err) {
-      console.error('🔥 Fetch-fel:', err);
+    } catch {
       alert('Kunde inte skicka bokningen.');
     }
   };
@@ -262,6 +304,10 @@ const BookingPage = () => {
           alignItems: 'center',
           justifyContent: 'flex-start',
         }}>
+        {successMessage && (
+          <div className="success-message">{successMessage}</div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
@@ -290,33 +336,13 @@ const BookingPage = () => {
 
           <br />
 
-          <label>
-            Välj datum:
-            <input
-              type="text"
-              readOnly
-              value={formData.date.toLocaleDateString('sv-SE')}
-              onClick={() => setShowDatepicker(!showDatepicker)}
-              style={{
-                cursor: 'pointer',
-                width: '100%',
-                padding: '0.5rem',
-                marginTop: '0.3rem',
-              }}
-            />
-          </label>
-
-          {showDatepicker && (
-            <div style={{ marginBottom: '1rem' }}>
-              <DatePicker
-                selected={formData.date}
-                onChange={handleDateChange}
-                inline
-              />
-            </div>
-          )}
-
-          <br />
+          <DateSelector
+            date={formData.date}
+            onDateChange={handleDateChange}
+            isDayFullyBooked={isDayFullyBooked}
+            showDatepicker={showDatepicker}
+            toggleDatepicker={() => setShowDatepicker((prev) => !prev)}
+          />
 
           <label>
             Välj tatuerare:
@@ -357,28 +383,14 @@ const BookingPage = () => {
 
           <br />
 
-          <label>
-            Starttid för tatuering:
-            <select
-              name="time"
-              value={formData.time}
-              onChange={handleTimeChange}
-              required
-              style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}>
-              <option value="">Välj starttid</option>
-              {getAvailableStartTimes().map((time) => (
-                <option key={time} value={time}>
-                  {time}
-                </option>
-              ))}
-            </select>
-            {formData.tattooTime === '2' && (
-              <small style={{ color: 'red' }}>
-                Obs: Vissa tider är inte tillgängliga för 2-timmarsbokningar på
-                grund av lunch eller stängning.
-              </small>
-            )}
-          </label>
+          {timeError && <ErrorMessage message={timeError} />}
+
+          <TimePicker
+            time={formData.time}
+            tattooTime={formData.tattooTime}
+            onTimeChange={handleTimeChange}
+            getAvailableStartTimes={getAvailableStartTimes}
+          />
 
           <br />
 
@@ -441,7 +453,6 @@ const BookingPage = () => {
                     const file = e.target.files[0];
                     if (file) {
                       setReferenceImage(file);
-                      console.log('Bifogad bild:', file);
                     }
                   }}
                   style={{ marginTop: '0.3rem' }}

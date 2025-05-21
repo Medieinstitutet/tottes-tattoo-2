@@ -133,6 +133,31 @@ button:hover {
   background-color: #e6c94f;
 }
 
+.fully-booked-day {
+  background-color: #eee !important;
+  color: #999 !important;
+  text-decoration: line-through;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  z-index: 9999 !important;
+  position: relative;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+}
+
 .footer {
   background: #231a15;
   color: #e0e0e0;
