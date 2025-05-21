@@ -1,33 +1,40 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: './config/settings.env' });
 
 import express from 'express';
-import bookingRoutes from './routes/bookingRoutes.mjs';
+import bookingRouter from './routes/booking-routes.mjs';
+import scheduleRouter from './routes/schedule-routes.mjs';
 import artistRouter from './routes/artistRoutes.mjs';
+import AppError from './models/appError.mjs';
+import connectDb from './db/db.mjs';
+import { logger } from './middleware/logger.mjs';
 import errorHandler from './middleware/errorHandler.mjs';
-import { connectDb } from './db/db.mjs';
 import cors from 'cors';
+
+connectDb();
 
 const app = express();
 
-// Connect to database
-connectDb();
-
-// Security middleware
 app.use(cors());
-
-// Body parsing middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Static files
-app.use('/uploads', express.static('uploads'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(logger);
+}
 
-// API routes
-app.use('/api/v1/bookings', bookingRoutes);
+app.use('/api/v1/bookings', bookingRouter);
+app.use('/api/v1/schedule', scheduleRouter);
 app.use('/api/v1/artists', artistRouter);
 
-// Error handling
+app.all('*', (req, res, next) => {
+  next(
+    new AppError(
+      `Not Found. Got: http://localhost:${process.env.PORT}${req.originalUrl}`,
+      404
+    )
+  );
+});
+
 app.use(errorHandler);
 
-export default app;
+export { app };
