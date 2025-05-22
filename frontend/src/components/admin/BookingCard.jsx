@@ -131,7 +131,7 @@ export default function BookingCard({ booking, onDelete, onEdit }) {
       )}
 
       {booking.referenceImage &&
-        /\.(jpg|jpeg|png)$/i.test(booking.referenceImage) && (
+        /\.(jpg|jpeg|png|ico)$/i.test(booking.referenceImage) && (
           <Field>
             <Label>Referensbild:</Label>
             <div
