@@ -96,6 +96,7 @@ export default function BookingCard({ booking, onDelete, onEdit }) {
   // 	? `http://localhost:3000/${booking.referenceImage}`
   // 	: booking.referenceImage;
 
+
   return (
     <Card bgColor={bgColor}>
       {isOld && <OldTag>⏳ Tidigare</OldTag>}
@@ -107,7 +108,8 @@ export default function BookingCard({ booking, onDelete, onEdit }) {
         <Label>Typ av bokning:</Label> {booking.type}
       </Field>
       <Field>
-        <Label>Datum & tid:</Label> {booking.date} – {booking.time}
+      <Label>Datum & tid:</Label> {booking.date} – {booking.time}
+
       </Field>
       <Field>
         <Label>Tatuerare:</Label> {booking.employee}
