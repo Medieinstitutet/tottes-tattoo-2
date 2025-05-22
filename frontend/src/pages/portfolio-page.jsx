@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-//import '../styles/portfolio-page.css';
 import '../styles/portfolio/portfolio-page.css';
 
 import Navigation from '../components/NavBar';

@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-//import '../styles/portfolio-page.css';
 import '../../styles/portfolio/Lightbox.css';
 
 const Lightbox = ({ image, onClose }) => {

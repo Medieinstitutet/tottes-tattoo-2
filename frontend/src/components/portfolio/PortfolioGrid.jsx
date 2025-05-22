@@ -1,6 +1,5 @@
 import React from 'react';
 import PortfolioCard from './PortfolioCard';
-//import '../styles/portfolio-page.css';
 import '../../styles/portfolio/PortfolioGrid.css';
 
 

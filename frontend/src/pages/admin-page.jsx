@@ -1,4 +1,3 @@
-// ... importاتك العادية
 import React, { useEffect, useState } from 'react';
 import Navigation from '../components/NavBar';
 import Footer from '../components/Footer';

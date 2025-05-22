@@ -89,7 +89,7 @@ const CountBox = styled.div`
   white-space: nowrap;
 `;
 
-// زر "Filtrera"
+// button"Filtrera"
 const ToggleButton = styled.button`
   all: unset;
   background-color: #d4af37;
@@ -107,7 +107,7 @@ const ToggleButton = styled.button`
   }
 `;
 
-// Drawer للجوال
+// Drawer for mobile
 const Drawer = styled.div`
   position: fixed;
   top: 0;
@@ -192,10 +192,8 @@ export default function BookingFilters({
 
   return (
     <>
-      {/* زر الموبايل لفتح Drawer */}
       <ToggleButton onClick={() => setIsOpen(true)}>Filtrera</ToggleButton>
 
-      {/* Drawer للموبايل */}
       <Drawer isOpen={isOpen} ref={drawerRef}>
         <CloseButton onClick={() => setIsOpen(false)}>Stäng</CloseButton>
 
@@ -265,7 +263,6 @@ export default function BookingFilters({
         </CountBox>
       </Drawer>
 
-      {/* الفلاتر العادية للشاشات الكبيرة */}
       <FiltersWrapper>
         <StatusFilterRow>
           {[
