@@ -67,11 +67,50 @@ const BookingPage = () => {
       '16:00',
       '17:00',
     ];
-    if (formData.tattooTime === '2') {
-      return allTimes.filter((time) => time !== '11:00' && time !== '17:00');
-    }
-    return allTimes;
-  }, [formData.tattooTime]);
+
+    if (!formData.date || !formData.tattooArtist) return [];
+
+    const dateStr = formData.date.toISOString().split('T')[0];
+    const selectedArtist = formData.tattooArtist.trim().toLowerCase();
+
+    const blockedTimes = new Set();
+
+    bookings.forEach((b) => {
+      const bookedArtist = b.employee.trim().toLowerCase();
+      const bookedDate = new Date(b.dateAndTime);
+      const bookedDateStr = bookedDate.toISOString().split('T')[0];
+
+      if (bookedDateStr !== dateStr || bookedArtist !== selectedArtist) return;
+
+      const duration = b.durationInHours || 1;
+
+      // ❗️ Tolka UTC korrekt
+      const hourUTC = bookedDate.getUTCHours();
+      const minuteUTC = bookedDate.getUTCMinutes();
+
+      for (let i = 0; i < duration; i++) {
+        const h = hourUTC + i;
+        const timeStr = `${String(h).padStart(2, '0')}:${String(
+          minuteUTC
+        ).padStart(2, '0')}`;
+        blockedTimes.add(timeStr);
+      }
+    });
+
+    const filteredTimes =
+      formData.tattooTime === '2'
+        ? allTimes.filter((t) => t !== '11:00' && t !== '17:00')
+        : allTimes;
+
+    const available = filteredTimes.map((t) => ({
+      time: t,
+      isBooked: blockedTimes.has(t),
+    }));
+
+    console.log('💬 Tider:', { blocked: [...blockedTimes], available });
+
+    return available;
+  }, [bookings, formData.date, formData.tattooArtist, formData.tattooTime]);
 
   useEffect(() => {
     if (!formData.tattooArtist || bookings.length === 0) return;
@@ -185,7 +224,11 @@ const BookingPage = () => {
     setSuccessMessage('');
 
     const validTimes = getAvailableStartTimes();
-    if (!validTimes.includes(formData.time)) {
+    const isValid = validTimes.some(
+      (t) => t.time === formData.time && !t.isBooked
+    );
+
+    if (!isValid) {
       alert('Ogiltig starttid. Välj en tillgänglig tid från listan.');
       return;
     }

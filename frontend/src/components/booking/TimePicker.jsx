@@ -6,7 +6,10 @@ const TimePicker = ({
   onTimeChange,
   getAvailableStartTimes,
 }) => {
-  const availableTimes = getAvailableStartTimes();
+  const availableTimes = getAvailableStartTimes(); // array av { time, isBooked }
+
+  // Om inga tider ska visas ännu (ex. artist ej vald)
+  if (!availableTimes || availableTimes.length === 0) return null;
 
   return (
     <label>
@@ -18,9 +21,13 @@ const TimePicker = ({
         required
         style={{ width: '100%', padding: '0.5rem', marginTop: '0.3rem' }}>
         <option value="">Välj starttid</option>
-        {availableTimes.map((t) => (
-          <option key={t} value={t}>
-            {t}
+        {availableTimes.map(({ time: t, isBooked }) => (
+          <option
+            key={t}
+            value={t}
+            disabled={isBooked}
+            style={isBooked ? { color: 'red' } : {}}>
+            {isBooked ? `${t} – Upptagen` : t}
           </option>
         ))}
       </select>
