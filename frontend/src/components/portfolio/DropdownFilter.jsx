@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import '../styles/portfolio-page.css';
 import "../../styles/portfolio/DropdownFilter.css";
 const DropdownFilter = ({ label, options, selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);

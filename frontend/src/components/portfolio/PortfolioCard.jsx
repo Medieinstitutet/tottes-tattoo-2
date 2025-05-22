@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import '../styles/portfolio-page.css';
 import '../../styles/portfolio/PortfolioCard.css';
 
 const PortfolioCard = ({ item, onClick }) => {

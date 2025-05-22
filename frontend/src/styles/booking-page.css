@@ -24,12 +24,12 @@ main {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  min-height: 85vh; /* Täcker minst hela viewport */
+  min-height: 85vh;
   display: flex;
   justify-content: flex-start;
-  align-items: center; /* Centrerar horisontellt */
+  align-items: center;
   flex-direction: column;
-  flex-grow: 1; /* Gör att main kan växa med innehållet */
+  flex-grow: 1;
 }
 
 form {
@@ -131,6 +131,31 @@ button:hover {
 
 .react-datepicker__day:hover {
   background-color: #e6c94f;
+}
+
+.fully-booked-day {
+  background-color: #eee !important;
+  color: #999 !important;
+  text-decoration: line-through;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  margin-top: 8rem;
+  margin-bottom: 0;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  z-index: 9999 !important;
+  position: relative;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
 }
 
 .footer {
