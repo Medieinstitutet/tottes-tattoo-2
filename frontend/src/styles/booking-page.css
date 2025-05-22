@@ -24,12 +24,12 @@ main {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  min-height: 85vh; /* Täcker minst hela viewport */
+  min-height: 85vh;
   display: flex;
   justify-content: flex-start;
-  align-items: center; /* Centrerar horisontellt */
+  align-items: center;
   flex-direction: column;
-  flex-grow: 1; /* Gör att main kan växa med innehållet */
+  flex-grow: 1;
 }
 
 form {
@@ -145,8 +145,8 @@ button:hover {
   background-color: #d4edda;
   color: #155724;
   padding: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 8rem;
+  margin-bottom: 0;
   border-radius: 5px;
   width: 100%;
   max-width: 500px;

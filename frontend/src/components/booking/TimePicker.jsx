@@ -6,9 +6,8 @@ const TimePicker = ({
   onTimeChange,
   getAvailableStartTimes,
 }) => {
-  const availableTimes = getAvailableStartTimes(); // array av { time, isBooked }
+  const availableTimes = getAvailableStartTimes();
 
-  // Om inga tider ska visas ännu (ex. artist ej vald)
   if (!availableTimes || availableTimes.length === 0) return null;
 
   return (

@@ -84,7 +84,7 @@ const BookingPage = () => {
 
       const duration = b.durationInHours || 1;
 
-      // ❗️ Tolka UTC korrekt
+      // Tolka UTC korrekt
       const hourUTC = bookedDate.getUTCHours();
       const minuteUTC = bookedDate.getUTCMinutes();
 
@@ -107,7 +107,7 @@ const BookingPage = () => {
       isBooked: blockedTimes.has(t),
     }));
 
-    console.log('💬 Tider:', { blocked: [...blockedTimes], available });
+    console.log('Tider:', { blocked: [...blockedTimes], available });
 
     return available;
   }, [bookings, formData.date, formData.tattooArtist, formData.tattooTime]);
@@ -278,7 +278,8 @@ const BookingPage = () => {
     }
 
     const data = new FormData();
-    data.append('phoneNumber', formData.phone.trim());
+    data.append('phoneNumber', formData.phone.trim().replace(/\s+/g, ''));
+
     data.append('purpose', formData.type);
     data.append('employee', formData.tattooArtist);
     data.append('durationInHours', parseInt(formData.tattooTime));
