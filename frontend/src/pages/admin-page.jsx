@@ -1,42 +1,68 @@
+// ... importاتك العادية
 import React, { useEffect, useState } from 'react';
 import Navigation from '../components/NavBar';
 import Footer from '../components/Footer';
 import styled from 'styled-components';
-import BookingList from '../Components/BookingList';
-import BookingDetail from '../Components/BookingDetail';
+import BookingCard from '../components/admin/BookingCard';
+import BookingFilters from '../components/admin/BookingFilters';
+import EditBookingModal from '../components/admin/EditBookingModal';
 import '../styles/admin-page.css';
 import adminBg from '../assets/admin_bg.jpg';
-import ArtistList from '../components/admin/ArtistList';
 
 const Wrapper = styled.div`
   min-height: 80vh;
   font-family: 'Roboto', 'Georgia', Arial, sans-serif;
-  color: ${({ theme }) => theme.colors.text};
-  background: ${({ theme }) => theme.colors.background};
+  color: white;
+  background: #181512;
   padding: 2rem;
+  padding-top: 7rem;
   background-image: url(${adminBg});
   background-size: cover;
   background-position: center;
 `;
 
-const ADMIN_USERNAME = 'employee'; // Change to your desired username
-const ADMIN_PASSWORD = 'password123'; // Change to your desired password
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+`;
+const HeaderBox = styled.div`
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid #d4af37;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 10px #00000066;
+`;
+
+const Title = styled.h2`
+  color: #d4af37;
+  font-size: 2rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px #000;
+  margin: 0;
+`;
+
+const API_BASE_URL = 'http://localhost:3000/api/v1';
+const ADMIN_USERNAME = 'employee';
+const ADMIN_PASSWORD = 'password123';
 
 export default function AdminPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [selectedArtist, setSelectedArtist] = useState(null);
   const [bookings, setBookings] = useState([]);
-  const [selectedBooking, setSelectedBooking] = useState(null);
-  const [artists, setArtists] = useState([
-    { id: 1, name: 'Totte Lindström' },
-    { id: 2, name: 'Anders Lindström' },
-    { id: 3, name: 'Erik Sandberg' },
-    { id: 4, name: 'Marcus Diaz' },
-    { id: 5, name: 'Amanda Berg' },
-  ]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedArtist, setSelectedArtist] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [loading, setLoading] = useState(false);
+  const [editBooking, setEditBooking] = useState(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -48,97 +74,178 @@ export default function AdminPage() {
     }
   };
 
-  useEffect(() => {
-    fetch('http://localhost:3000/api/v1/artists')
-      .then((res) => {
-        if (!res.ok) throw new Error('API error');
-        return res.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setArtists(data);
-        } else {
-          setArtists([
-            { id: 1, name: 'Totte Lindström' },
-            { id: 2, name: 'Anders Lindström' },
-            { id: 3, name: 'Erik Sandberg' },
-            { id: 4, name: 'Marcus Diaz' },
-            { id: 5, name: 'Amanda Berg' },
-          ]);
-        }
-      })
-      .catch(() => {
-        setArtists([
-          { id: 1, name: 'Totte Lindström' },
-          { id: 2, name: 'Anders Lindström' },
-          { id: 3, name: 'Erik Sandberg' },
-          { id: 4, name: 'Marcus Diaz' },
-          { id: 5, name: 'Amanda Berg' },
-        ]);
-      });
-  }, []);
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedType('');
+    setSelectedArtist('');
+    setSelectedDate('');
+    setSelectedTime('');
+    setSortBy('');
+    setStatusFilter('All');
+  };
 
-  useEffect(() => {
-    if (selectedArtist) {
-      fetch('http://localhost:3000/api/v1/bookings')
+  const handleDeleteBooking = (bookingId) => {
+    if (confirm('Är du säker på att du vill ta bort denna bokning?')) {
+      setLoading(true);
+      fetch(`${API_BASE_URL}/bookings/${bookingId}`, { method: 'DELETE' })
         .then((res) => {
           if (!res.ok) throw new Error('API error');
-          return res.json();
+          setBookings((prev) => prev.filter((b) => b.id !== bookingId));
         })
+        .catch((err) => {
+          console.error('Error deleting:', err);
+          alert('Kunde inte ta bort bokningen');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  };
+
+  const handleSaveEdit = (updatedBooking) => {
+    const updatedData = {
+      name: updatedBooking.customer,
+      email: updatedBooking.email,
+      phoneNumber: updatedBooking.phone,
+      purpose: updatedBooking.type === 'Tatuering' ? 'tattoo' : 'consultation',
+      dateAndTime: `${updatedBooking.date}T${updatedBooking.time}`,
+      employee: updatedBooking.employee,
+      description: updatedBooking.description,
+      durationInHours: parseInt(updatedBooking.duration),
+    };
+
+    setLoading(true);
+    fetch(`${API_BASE_URL}/bookings/${updatedBooking.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedData),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to update booking');
+        setBookings((prev) =>
+          prev.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
+        );
+        setEditBooking(null);
+      })
+      .catch((err) => {
+        console.error('Error updating booking:', err);
+        alert('Kunde inte uppdatera bokningen');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    if (loggedIn) {
+      setLoading(true);
+      fetch(`${API_BASE_URL}/bookings`)
+        .then((res) => res.json())
         .then((result) => {
-          console.log('Bokningar från API:', result);
           const bookingsArray = Array.isArray(result.data) ? result.data : [];
-          const mappedBookings = bookingsArray.map((b) => ({
+
+          const mapped = bookingsArray.map((b) => ({
             id: b._id,
             customer: b.name,
             date: b.dateAndTime ? b.dateAndTime.split('T')[0] : '',
-            time: b.dateAndTime ? b.dateAndTime.split('T')[1]?.slice(0, 5) : '',
-            type: b.purpose,
-            employee: b.employee,
+            time: b.dateAndTime
+              ? new Date(b.dateAndTime).toLocaleTimeString('sv-SE', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              : '',
+            type: b.purpose === 'tattoo' ? 'Tatuering' : 'Konsultation',
+            employee:
+              b.employee === 'Totte'
+                ? 'Totte Lindström'
+                : b.employee === 'Amanda'
+                ? 'Amanda Berg'
+                : b.employee === 'Anders'
+                ? 'Anders Lindström'
+                : b.employee.toLowerCase() === 'marcus'
+                ? 'Marcus Diaz'
+                : b.employee,
             email: b.email,
+            phone: b.phoneNumber || '',
+            duration: `${b.durationInHours}`,
             description: b.description,
+            referenceImage: b.referenceImage || b.imageUrl || '',
           }));
-          setBookings(mappedBookings);
+
+          setBookings(mapped);
         })
-        .catch(() => {
-          setBookings([
-            {
-              id: '1',
-              date: '2024-05-20',
-              time: '10:00',
-              type: 'Konsultation',
-              customer: 'Lisa',
-              duration: '1 timme',
-              request: 'Drake på armen',
-              file: '',
-            },
-            {
-              id: '2',
-              date: '2024-05-20',
-              time: '13:00',
-              type: 'Tatuering',
-              customer: 'Lisa',
-              duration: '2 timmar',
-              request: 'Drake på armen',
-              file: '',
-            },
-          ]);
+        .catch((err) => {
+          console.error('Error fetching bookings:', err);
+          setBookings([]);
+        })
+        .finally(() => {
+          setLoading(false);
         });
-    } else {
-      setBookings([]);
     }
-  }, [selectedArtist]);
+  }, [loggedIn]);
+
+  const filteredBookings = bookings
+    .filter((b) => {
+      const query = searchQuery.toLowerCase();
+      const matchSearch =
+        b.customer.toLowerCase().includes(query) ||
+        b.email.toLowerCase().includes(query) ||
+        b.phone.includes(query);
+
+      const matchType = selectedType ? b.type === selectedType : true;
+      const matchArtist = selectedArtist ? b.employee === selectedArtist : true;
+      const matchDate = selectedDate ? b.date === selectedDate : true;
+      const matchTime = selectedTime ? b.time === selectedTime : true;
+
+      const today = new Date().toISOString().split('T')[0];
+      const matchStatus =
+        statusFilter === 'All'
+          ? true
+          : statusFilter === 'Today'
+          ? b.date === today
+          : statusFilter === 'Upcoming'
+          ? b.date > today
+          : statusFilter === 'Past'
+          ? b.date < today
+          : true;
+
+      return (
+        matchSearch &&
+        matchType &&
+        matchArtist &&
+        matchDate &&
+        matchTime &&
+        matchStatus
+      );
+    })
+    .sort((a, b) => {
+      if (sortBy === 'time') {
+        return a.time.localeCompare(b.time);
+      }
+      return 0;
+    });
+
+  const uniqueArtists = Array.from(
+    new Set([
+      ...bookings.map((b) => b.employee),
+      'Totte Lindström',
+      'Anders Lindström',
+      'Amanda Berg',
+      'Marcus Diaz',
+      'Erik Sandberg',
+    ])
+  ).filter(Boolean);
 
   if (!loggedIn) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
+      <>
         <Navigation />
-        <div style={{ flex: 1 }}>
+        <div
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
           <form
             onSubmit={handleLogin}
             style={{
@@ -166,7 +273,7 @@ export default function AdminPage() {
           </form>
         </div>
         <Footer />
-      </div>
+      </>
     );
   }
 
@@ -174,110 +281,65 @@ export default function AdminPage() {
     <>
       <Navigation />
       <Wrapper>
-        <h2>Tatuerare</h2>
-        <ArtistList
-          artists={artists}
-          onSelect={(artist) => {
-            setSelectedArtist(artist);
-            setSelectedBooking(null);
-          }}
-          selectedArtist={selectedArtist}
-          bookings={bookings}
-          onBookingSelect={setSelectedBooking}
-        />
-        <BookingDetail
-          booking={selectedBooking}
-          onClose={() => setSelectedBooking(null)}
-        />
-      </Wrapper>
-      <Footer>
-        <b>Tottes Tattoo</b> &copy; 2024. Alla rättigheter förbehållna.
-        <br />
-        Din väg till unika fantasy-tatueringar.
-        <div
-          style={{
-            marginTop: '1rem',
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '1.5rem',
-          }}>
-          <a
-            href="#"
-            aria-label="Instagram"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#d4af37', fontSize: '2rem' }}>
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-              <line x1="17.5" y1="6.5" x2="17.5" y2="6.5" />
-            </svg>
-          </a>
-          <a
-            href="#"
-            aria-label="Facebook"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#d4af37', fontSize: '2rem' }}>
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round">
-              <path d="M18 2h-3a4 4 0 0 0-4 4v3H7v4h4v8h4v-8h3l1-4h-4V6a1 1 0 0 1 1-1h3z" />
-            </svg>
-          </a>
-          <a
-            href="#"
-            aria-label="YouTube"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#d4af37', fontSize: '2rem' }}>
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round">
-              <rect x="2" y="7" width="20" height="10" rx="3" ry="3" />
-              <polygon points="10 9 15 12 10 15 10 9" />
-            </svg>
-          </a>
-          <a
-            href="#"
-            aria-label="X"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#d4af37', fontSize: '2rem' }}>
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </a>
+        <HeaderBox>
+          <Title>Admin Bokningar</Title>
+        </HeaderBox>
+
+        <div style={{ marginBottom: '2rem' }}>
+          <BookingFilters
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedType={selectedType}
+            setSelectedType={setSelectedType}
+            selectedArtist={selectedArtist}
+            setSelectedArtist={setSelectedArtist}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            selectedTime={selectedTime}
+            setSelectedTime={setSelectedTime}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            onReset={resetFilters}
+            total={bookings.length}
+            filtered={filteredBookings.length}
+            allArtists={uniqueArtists}
+          />
         </div>
-      </Footer>
+
+        {loading ? (
+          <p>Laddar bokningar...</p>
+        ) : filteredBookings.length === 0 ? (
+          <p style={{ color: '#d4af37', fontWeight: 'bold' }}>
+            {selectedArtist
+              ? `Inga bokningar hittades för ${selectedArtist}`
+              : 'Inga bokningar hittades'}
+          </p>
+        ) : (
+          <Grid>
+            {filteredBookings.map((booking) => (
+              <BookingCard
+                key={booking.id}
+                booking={booking}
+                onDelete={handleDeleteBooking}
+                onEdit={setEditBooking}
+              />
+            ))}
+          </Grid>
+        )}
+      </Wrapper>
+
+      {editBooking && (
+        <EditBookingModal
+          booking={editBooking}
+          onClose={() => setEditBooking(null)}
+          onSave={handleSaveEdit}
+          allArtists={uniqueArtists}
+        />
+      )}
+
+      <Footer />
     </>
   );
 }
