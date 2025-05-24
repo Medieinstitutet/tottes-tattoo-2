@@ -148,10 +148,7 @@ export default function AdminPage() {
             customer: b.name,
             date: b.dateAndTime ? b.dateAndTime.split('T')[0] : '',
             time: b.dateAndTime
-              ? new Date(b.dateAndTime).toLocaleTimeString('sv-SE', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
+              ? b.dateAndTime.split('T')[1]?.substring(0, 5)
               : '',
             type: b.purpose === 'tattoo' ? 'Tatuering' : 'Konsultation',
             employee:

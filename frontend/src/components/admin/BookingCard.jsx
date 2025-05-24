@@ -93,9 +93,8 @@ export default function BookingCard({ booking, onDelete, onEdit }) {
   const isOld = isPastDate(booking.date);
 
   // const fullImageURL = booking.referenceImage?.startsWith('uploads/')
-  // 	? `http://localhost:3000/${booking.referenceImage}`
-  // 	: booking.referenceImage;
-
+  //  ? `http://localhost:3000/${booking.referenceImage}`
+  //  : booking.referenceImage;
 
   return (
     <Card bgColor={bgColor}>
@@ -108,8 +107,7 @@ export default function BookingCard({ booking, onDelete, onEdit }) {
         <Label>Typ av bokning:</Label> {booking.type}
       </Field>
       <Field>
-      <Label>Datum & tid:</Label> {booking.date} – {booking.time}
-
+        <Label>Datum & tid:</Label> {booking.date} – {booking.time}
       </Field>
       <Field>
         <Label>Tatuerare:</Label> {booking.employee}
@@ -143,20 +141,10 @@ export default function BookingCard({ booking, onDelete, onEdit }) {
                 flexDirection: 'column',
                 gap: '0.3rem',
               }}>
-              <img
-                src={`http://localhost:3000/${booking.referenceImage}`}
-                alt='Referensbild'
-                style={{
-                  width: '100%',
-                  maxWidth: '240px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 6px #0009',
-                }}
-              />
               <a
                 href={`http://localhost:3000/${booking.referenceImage}`}
-                target='_blank'
-                rel='noopener noreferrer'
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
                   fontSize: '0.85rem',
                   color: '#d4af37',
@@ -164,20 +152,6 @@ export default function BookingCard({ booking, onDelete, onEdit }) {
                 }}>
                 Öppna i nytt fönster
               </a>
-              {/*
-                <a
-                	href={`http://localhost:3000/${booking.referenceImage}`}
-                	download={
-                		booking.referenceImage.split('/').pop() || 'referensbild.jpg'
-                	}
-                	style={{
-                		fontSize: '0.85rem',
-                		color: '#d4af37',
-                		textDecoration: 'underline',
-                	}}>
-                	Ladda ner
-                </a>
-                */}
             </div>
           </Field>
         )}
