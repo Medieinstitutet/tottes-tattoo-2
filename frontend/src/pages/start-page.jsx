@@ -11,7 +11,7 @@ import studio2 from '../assets/studio2.jpg';
 import studio3 from '../assets/studio3.jpg';
 import studio4 from '../assets/studio4.jpg';
 import { Link } from 'react-router-dom';
-import Navigation from '../Components/NavBar';
+import Navigation from '../components/NavBar';
 
 const Wrapper = styled.div`
   background: ${({ theme }) => theme.colors.background};

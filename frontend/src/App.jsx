@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { theme } from './Pages/theme';
-import StartPage from './Pages/start-page.jsx';
-import BookingPage from './Pages/booking-page.jsx';
-import PortfolioPage from './Pages/portfolio-page.jsx';
-import AdminPage from './Pages/admin-page.jsx';
+import { theme } from './pages/theme';
+import StartPage from './pages/start-page.jsx';
+import BookingPage from './pages/booking-page.jsx';
+import PortfolioPage from './pages/portfolio-page.jsx';
+import AdminPage from './pages/admin-page.jsx';
 
 const App = () => {
   return (
