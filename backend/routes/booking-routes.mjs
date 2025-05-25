@@ -1,5 +1,5 @@
 import express from 'express';
-import upload from '../utilities/imageUpload.mjs';
+import upload from '../imageUpload.mjs';
 import {
   listAllBookings,
   findBookingById,
