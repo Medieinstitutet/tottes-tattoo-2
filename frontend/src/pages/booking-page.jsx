@@ -68,47 +68,54 @@ const BookingPage = () => {
       '17:00',
     ];
 
-    if (!formData.date || !formData.tattooArtist) return [];
+    if (!formData.date || !formData.tattooArtist || !formData.tattooTime)
+      return [];
 
-    const dateStr = formData.date.toISOString().split('T')[0];
     const selectedArtist = formData.tattooArtist.trim().toLowerCase();
-
-    const blockedTimes = new Set();
-
-    bookings.forEach((b) => {
-      const bookedArtist = b.employee.trim().toLowerCase();
-      const bookedDate = new Date(b.dateAndTime);
-      const bookedDateStr = bookedDate.toISOString().split('T')[0];
-
-      if (bookedDateStr !== dateStr || bookedArtist !== selectedArtist) return;
-
-      const duration = b.durationInHours || 1;
-
-      // Tolka UTC korrekt
-      const hourUTC = bookedDate.getUTCHours();
-      const minuteUTC = bookedDate.getUTCMinutes();
-
-      for (let i = 0; i < duration; i++) {
-        const h = hourUTC + i;
-        const timeStr = `${String(h).padStart(2, '0')}:${String(
-          minuteUTC
-        ).padStart(2, '0')}`;
-        blockedTimes.add(timeStr);
-      }
-    });
+    const selectedDuration = parseInt(formData.tattooTime);
 
     const filteredTimes =
-      formData.tattooTime === '2'
-        ? allTimes.filter((t) => t !== '11:00' && t !== '17:00')
+      selectedDuration === 2
+        ? allTimes.filter((t) => t !== '11:00' && t !== '17:00') // förhindra att 2h sträcker sig förbi sista tiden
         : allTimes;
 
-    const available = filteredTimes.map((t) => ({
-      time: t,
-      isBooked: blockedTimes.has(t),
-    }));
+    const available = filteredTimes.map((startTime) => {
+      const [hour, minute] = startTime.split(':');
+      const localStart = new Date(
+        formData.date.getFullYear(),
+        formData.date.getMonth(),
+        formData.date.getDate(),
+        parseInt(hour),
+        parseInt(minute)
+      );
+      const localEnd = new Date(
+        localStart.getTime() + selectedDuration * 60 * 60 * 1000
+      );
 
-    console.log('Tider:', { blocked: [...blockedTimes], available });
+      // Justera till UTC-tid för korrekt jämförelse
+      const startUTC = new Date(
+        localStart.getTime() - localStart.getTimezoneOffset() * 60000
+      );
+      const endUTC = new Date(
+        localEnd.getTime() - localEnd.getTimezoneOffset() * 60000
+      );
 
+      const isBooked = bookings.some((b) => {
+        const bookedArtist = b.employee.trim().toLowerCase();
+        if (bookedArtist !== selectedArtist) return false;
+
+        const bookingStart = new Date(b.dateAndTime);
+        const bookingEnd = new Date(
+          bookingStart.getTime() + (b.durationInHours || 1) * 60 * 60 * 1000
+        );
+
+        return startUTC < bookingEnd && endUTC > bookingStart;
+      });
+
+      return { time: startTime, isBooked };
+    });
+
+    console.log('Tillgängliga tider:', available);
     return available;
   }, [bookings, formData.date, formData.tattooArtist, formData.tattooTime]);
 
@@ -219,6 +226,25 @@ const BookingPage = () => {
     return day === 0 || day === 6;
   };
 
+  const checkForOverlap = (selectedUtcStart, duration, artist) => {
+    const selectedStart = new Date(selectedUtcStart);
+    const selectedEnd = new Date(
+      selectedStart.getTime() + duration * 60 * 60 * 1000
+    );
+
+    return bookings.some((b) => {
+      const bookedArtist = b.employee.trim().toLowerCase();
+      if (bookedArtist !== artist.toLowerCase()) return false;
+
+      const bookingStart = new Date(b.dateAndTime);
+      const bookingEnd = new Date(
+        bookingStart.getTime() + (b.durationInHours || 1) * 60 * 60 * 1000
+      );
+
+      return selectedStart < bookingEnd && selectedEnd > bookingStart;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccessMessage('');
@@ -236,13 +262,13 @@ const BookingPage = () => {
     const selectedUtc = toUtcIso(formData.date, formData.time);
     const selectedArtist = formData.tattooArtist.trim().toLowerCase();
 
-    const alreadyBooked = bookings.some((b) => {
-      const bookedArtist = b.employee.trim().toLowerCase();
-      return b.dateAndTime === selectedUtc && bookedArtist === selectedArtist;
-    });
-
-    if (alreadyBooked) {
-      alert('Tiden är redan bokad. Välj en annan.');
+    const overlap = checkForOverlap(
+      selectedUtc,
+      parseInt(formData.tattooTime),
+      selectedArtist
+    );
+    if (overlap) {
+      alert('Den valda tiden överlappar med en annan bokning. Välj en annan.');
       return;
     }
 
