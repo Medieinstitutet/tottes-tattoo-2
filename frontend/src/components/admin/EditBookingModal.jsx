@@ -105,25 +105,106 @@ const Button = styled.button`
   }
 `;
 
+const Warning = styled.div`
+  color: #ff4d4d;
+  font-weight: bold;
+  margin-top: -0.5rem;
+`;
+
 export default function EditBookingModal({
   booking,
   onClose,
   onSave,
   allArtists = [],
+  bookings = [],
 }) {
   const [formData, setFormData] = useState({ ...booking });
+  const [overlapWarning, setOverlapWarning] = useState(false);
 
   useEffect(() => {
-    setFormData({ ...booking });
+    const normalizeEmployee = (fullName) => {
+      const match = fullName.match(/Totte|Amanda|Anders|Marcus|Erik/);
+      return match ? match[0] : fullName;
+    };
+
+    setFormData({
+      ...booking,
+      employee: normalizeEmployee(booking.employee),
+    });
   }, [booking]);
+
+  useEffect(() => {
+    const checkOverlap = () => {
+      const { date, time, duration, employee } = formData;
+      if (!date || !time || !duration || !employee) return;
+
+      const [hour, minute] = time.split(':').map(Number);
+      const localDate = new Date(date);
+      localDate.setHours(hour, minute, 0, 0);
+      const utcStart = new Date(
+        localDate.getTime() - localDate.getTimezoneOffset() * 60000
+      );
+      const utcEnd = new Date(
+        utcStart.getTime() + parseInt(duration) * 60 * 60 * 1000
+      );
+
+      const selectedArtist = employee.trim().toLowerCase();
+
+      const overlap = bookings.some((b) => {
+        if (b.id === booking.id) return false;
+
+        const fullName = b.employee.trim();
+        const match = fullName.match(/Totte|Amanda|Anders|Marcus|Erik/);
+        const bookedArtist = match
+          ? match[0].toLowerCase()
+          : fullName.toLowerCase();
+        if (bookedArtist !== selectedArtist) return false;
+
+        const [bh, bm] = (b.time || '00:00').split(':').map(Number);
+        const local = new Date(b.date);
+        local.setHours(bh, bm, 0, 0);
+        const bookingStart = new Date(
+          local.getTime() - local.getTimezoneOffset() * 60000
+        );
+        const bookingEnd = new Date(
+          bookingStart.getTime() +
+            (b.durationInHours || parseInt(b.duration) || 1) * 60 * 60 * 1000
+        );
+
+        return utcStart < bookingEnd && utcEnd > bookingStart;
+      });
+
+      console.log('=== DEBUG BOOKINGS ===');
+      console.log('formData:', formData);
+      console.log('bookings:', bookings);
+
+      setOverlapWarning(overlap);
+    };
+
+    checkOverlap();
+  }, [formData, bookings, booking.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let adjustedValue = value;
+    if (name === 'employee') {
+      const match = value.match(/Totte|Amanda|Anders|Marcus|Erik/);
+      if (match) adjustedValue = match[0];
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: adjustedValue }));
   };
 
   const handleSubmit = () => {
-    onSave(formData);
+    if (!overlapWarning) {
+      console.log('Sparar bokning:', formData);
+      onSave(formData);
+    } else {
+      alert(
+        '❗ Den valda tiden krockar med en annan bokning. Välj en annan tid.'
+      );
+    }
   };
 
   return (
@@ -155,6 +236,7 @@ export default function EditBookingModal({
         <Field>
           <Label>Tid</Label>
           <Input name="time" value={formData.time} onChange={handleChange} />
+          {overlapWarning && <Warning>❗ Tiden är redan bokad!</Warning>}
         </Field>
 
         <Field>
@@ -210,7 +292,9 @@ export default function EditBookingModal({
         </Field>
 
         <ButtonRow>
-          <Button onClick={handleSubmit}>Spara</Button>
+          <Button onClick={handleSubmit} disabled={overlapWarning}>
+            Spara
+          </Button>
           <Button danger onClick={onClose}>
             Avbryt
           </Button>
