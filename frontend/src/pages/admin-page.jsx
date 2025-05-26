@@ -102,15 +102,28 @@ export default function AdminPage() {
   };
 
   const handleSaveEdit = (updatedBooking) => {
+    const { date, time, duration, employee, type } = updatedBooking;
+
+    const [hour, minute] = time.split(':').map(Number);
+    const localDate = new Date(date);
+    localDate.setHours(hour, minute, 0, 0);
+    const utcDate = new Date(
+      localDate.getTime() - localDate.getTimezoneOffset() * 60000
+    );
+
+    const internalPurpose = type.toLowerCase().includes('tat')
+      ? 'tattoo'
+      : 'consultation';
+
     const updatedData = {
       name: updatedBooking.customer,
       email: updatedBooking.email,
       phoneNumber: updatedBooking.phone,
-      purpose: updatedBooking.type === 'Tatuering' ? 'tattoo' : 'consultation',
-      dateAndTime: `${updatedBooking.date}T${updatedBooking.time}`,
-      employee: updatedBooking.employee,
+      purpose: internalPurpose,
+      dateAndTime: utcDate.toISOString(),
+      employee: employee.trim(),
       description: updatedBooking.description,
-      durationInHours: parseInt(updatedBooking.duration),
+      durationInHours: parseInt(duration),
     };
 
     setLoading(true);
@@ -122,7 +135,9 @@ export default function AdminPage() {
       .then((res) => {
         if (!res.ok) throw new Error('Failed to update booking');
         setBookings((prev) =>
-          prev.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
+          prev.map((b) =>
+            b.id === updatedBooking.id ? { ...updatedBooking } : b
+          )
         );
         setEditBooking(null);
       })
@@ -332,6 +347,7 @@ export default function AdminPage() {
           onClose={() => setEditBooking(null)}
           onSave={handleSaveEdit}
           allArtists={uniqueArtists}
+          bookings={bookings}
         />
       )}
 

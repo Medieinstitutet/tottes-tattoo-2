@@ -499,7 +499,7 @@ const BookingPage = () => {
               </label>
               <br />
               <label>
-                Telefonnummer:
+                Telefonnummer:(valfritt)
                 <input
                   type="tel"
                   name="phone"
@@ -530,7 +530,7 @@ const BookingPage = () => {
               </label>
               <br />
               <label>
-                Övrig information:
+                Övrig information eller önskemål:
                 <textarea
                   name="additionalInfo"
                   value={formData.additionalInfo}
